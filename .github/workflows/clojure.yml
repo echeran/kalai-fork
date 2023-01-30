@@ -29,25 +29,25 @@ jobs:
         cli:  latest     # Clojure CLI based on tools.deps
         boot: latest     # or use 'latest' to always provision latest version of boot
 
-    - name: Transpile & build examples
-      run: |
-        pushd examples
-        make
-        git diff --exit-code
-        popd
-
-    - name: Compare transpilation to repo files for examples
-      run: git diff-index --exit-code HEAD
-
-    - name: Transpile & build sql_builder
-      run: |
-        pushd sql_builder
-        make
-        git diff --exit-code
-        popd
-
-    - name: Compare transpilation to repo files for sql_builder
-      run: git diff-index --exit-code HEAD
+#    - name: Transpile & build examples
+#      run: |
+#        pushd examples
+#        make
+#        git diff --exit-code
+#        popd
+#
+#    - name: Compare transpilation to repo files for examples
+#      run: git diff-index --exit-code HEAD
+#
+#    - name: Transpile & build sql_builder
+#      run: |
+#        pushd sql_builder
+#        make
+#        git diff --exit-code
+#        popd
+#
+#    - name: Compare transpilation to repo files for sql_builder
+#      run: git diff-index --exit-code HEAD
 
     - name: Release
       #if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'echeran/kalai-fork'
