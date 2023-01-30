@@ -22,4 +22,5 @@ clean:
 
 deploy:
 	clojure -T:build jar
+	echo "CLOJARS_USERNAME = ${CLOJARS_USERNAME}"
 	clojure -T:build deploy

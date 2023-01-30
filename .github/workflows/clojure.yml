@@ -50,8 +50,8 @@ jobs:
       run: git diff-index --exit-code HEAD
 
     - name: Release
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'kalai-transpiler/kalai'
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'echeran/kalai-fork'
       env:
         CLOJARS_PASSWORD: ${CLOJARSTOKEN}
-        CLOJARS_USERNAME: timothypratley
+        CLOJARS_USERNAME: echeran
       run: make deploy
