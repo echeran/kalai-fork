@@ -2,7 +2,7 @@
   (:require [clojure.tools.build.api :as b]
             [deps-deploy.deps-deploy :as dd]))
 
-(def lib 'com.github.kalai-transpiler/kalai)
+(def lib 'net.github.echeran/kalai-clojars-deploy-testing)
 (def version (format "0.1.%s" (b/git-count-revs nil)))
 (def class-dir "target/classes")
 (def basis (b/create-basis {:project "deps.edn"}))

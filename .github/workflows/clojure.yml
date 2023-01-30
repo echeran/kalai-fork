@@ -50,7 +50,7 @@ jobs:
       run: git diff-index --exit-code HEAD
 
     - name: Release
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'echeran/kalai-fork'
+      #if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'echeran/kalai-fork'
       env:
         CLOJARS_PASSWORD: ${CLOJARSTOKEN}
         CLOJARS_USERNAME: echeran
