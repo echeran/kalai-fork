@@ -9,65 +9,65 @@ public class Core {
 public static final TYPE_MISSING diffAssociativeKey(final TYPE_MISSING a, final TYPE_MISSING b, final TYPE_MISSING k) {
 final Object va = a.get(k);
 final Object vb = b.get(k);
-final Object vec18822 = diff(va, vb);
+final Object vec18731 = diff(va, vb);
 Object tmp43 = null;
 if ((0L <= 0L))
 {
-if ((0L < vec__18822.length()))
+if ((0L < vec__18731.length()))
 {
-tmp43 = vec__18822.get();
+tmp43 = vec__18731.get();
 }
 }
 final Object aa = tmp43;
 Object tmp44 = null;
 if ((0L <= 1L))
 {
-if ((1L < vec__18822.length()))
+if ((1L < vec__18731.length()))
 {
-tmp44 = vec__18822.get();
+tmp44 = vec__18731.get();
 }
 }
 final Object bb = tmp44;
 Object tmp45 = null;
 if ((0L <= 2L))
 {
-if ((2L < vec__18822.length()))
+if ((2L < vec__18731.length()))
 {
-tmp45 = vec__18822.get();
+tmp45 = vec__18731.get();
 }
 }
 final Object ab = tmp45;
 final Object inA = a.containsKey(k);
 final Object inB = b.containsKey(k);
-final TYPE_MISSING and5531Auto = inA;
+final TYPE_MISSING and5579Auto = inA;
 "MISSING_TYPE" tmp1;
-boolean tmp2 = and__5531__auto__;
+boolean tmp2 = and__5579__auto__;
 if (tmp2)
 {
-final TYPE_MISSING and5531Auto = inB;
+final TYPE_MISSING and5579Auto = inB;
 "MISSING_TYPE" tmp3;
-boolean tmp4 = and__5531__auto__;
+boolean tmp4 = and__5579__auto__;
 if (tmp4)
 {
-final Object or5533Auto = !(ab == null);
+final Object or5581Auto = !(ab == null);
 "MISSING_TYPE" tmp5;
-boolean tmp6 = or__5533__auto__;
+boolean tmp6 = or__5581__auto__;
 if (tmp6)
 {
-tmp5 = or__5533__auto__;
+tmp5 = or__5581__auto__;
 }
 else
 {
-final boolean and5531Auto = (va == null);
+final boolean and5579Auto = (va == null);
 "MISSING_TYPE" tmp7;
-boolean tmp8 = and__5531__auto__;
+boolean tmp8 = and__5579__auto__;
 if (tmp8)
 {
 tmp7 = (vb == null);
 }
 else
 {
-tmp7 = and__5531__auto__;
+tmp7 = and__5579__auto__;
 }
 {
 tmp5 = tmp7;
@@ -79,7 +79,7 @@ tmp3 = tmp5;
 }
 else
 {
-tmp3 = and__5531__auto__;
+tmp3 = and__5579__auto__;
 }
 {
 tmp1 = tmp3;
@@ -87,21 +87,21 @@ tmp1 = tmp3;
 }
 else
 {
-tmp1 = and__5531__auto__;
+tmp1 = and__5579__auto__;
 }
 final TYPE_MISSING same = tmp1;
 clojure.lang.PersistentArrayMap tmp9;
-final TYPE_MISSING and5531Auto = inA;
+final TYPE_MISSING and5579Auto = inA;
 "MISSING_TYPE" tmp11;
-boolean tmp12 = and__5531__auto__;
+boolean tmp12 = and__5579__auto__;
 if (tmp12)
 {
-final Object or5533Auto = !(aa == null);
+final Object or5581Auto = !(aa == null);
 "MISSING_TYPE" tmp13;
-boolean tmp14 = or__5533__auto__;
+boolean tmp14 = or__5581__auto__;
 if (tmp14)
 {
-tmp13 = or__5533__auto__;
+tmp13 = or__5581__auto__;
 }
 else
 {
@@ -113,7 +113,7 @@ tmp11 = tmp13;
 }
 else
 {
-tmp11 = and__5531__auto__;
+tmp11 = and__5579__auto__;
 }
 boolean tmp10 = tmp11;
 if (tmp10)
@@ -121,17 +121,17 @@ if (tmp10)
 tmp9 = new TYPE_MISSING().put(k, aa, io.lacuna.bifurcan.Maps.MERGE_LAST_WRITE_WINS);
 }
 clojure.lang.PersistentArrayMap tmp15;
-final TYPE_MISSING and5531Auto = inB;
+final TYPE_MISSING and5579Auto = inB;
 "MISSING_TYPE" tmp17;
-boolean tmp18 = and__5531__auto__;
+boolean tmp18 = and__5579__auto__;
 if (tmp18)
 {
-final Object or5533Auto = !(bb == null);
+final Object or5581Auto = !(bb == null);
 "MISSING_TYPE" tmp19;
-boolean tmp20 = or__5533__auto__;
+boolean tmp20 = or__5581__auto__;
 if (tmp20)
 {
-tmp19 = or__5533__auto__;
+tmp19 = or__5581__auto__;
 }
 else
 {
@@ -143,7 +143,7 @@ tmp17 = tmp19;
 }
 else
 {
-tmp17 = and__5531__auto__;
+tmp17 = and__5579__auto__;
 }
 boolean tmp16 = tmp17;
 if (tmp16)
@@ -275,24 +275,24 @@ if (tmp32)
 Object tmp46 = null;
 if ((0L <= 0L))
 {
-if ((0L < vec__18867.length()))
+if ((0L < vec__18776.length()))
 {
-tmp46 = vec__18867.get();
+tmp46 = vec__18776.get();
 }
 }
 Object tmp47 = null;
 if ((0L <= 1L))
 {
-if ((1L < vec__18867.length()))
+if ((1L < vec__18776.length()))
 {
-tmp47 = vec__18867.get();
+tmp47 = vec__18776.get();
 }
 }
 {
 return kalai.Kalai.foldLeft(m, vec(repeat(keys(m).stream().reduce((a, b) -> {
 return max(a, b);
-}).get(), null)), (result, p__18865) -> {
-final TYPE_MISSING vec18867 = p__18865;
+}).get(), null)), (result, p__18774) -> {
+final TYPE_MISSING vec18776 = p__18774;
 final Object k = tmp46;
 final Object v = tmp47;
 return result.put(k, v);

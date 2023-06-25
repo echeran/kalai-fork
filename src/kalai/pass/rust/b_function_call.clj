@@ -53,10 +53,11 @@
                                  (str/join " ")))
                 & ?args)
 
+      ;; This rule applies to mutable collections.
       ;; seq on persistent data structures falls through to kalai.rs
       ;; In Rust, we don't need to insert `{:seq true}` in metadata because `.into_iter()` is idempotent on Rust Iterators
       (r/invoke (u/var ~#'seq) (m/and ?coll
-                                      (m/app meta {:t {(m/pred (complement #{:pmap :pvector :pset})) [?value-t]}})))
+                                      (m/app meta {:t {(m/pred #{:mmap :mvector :mset}) [?value-t]}})))
       (r/method into_iter (r/method clone ?coll))
 
       (r/invoke (u/var ~#'first) ?seq)
@@ -161,7 +162,14 @@
 
       ;; conj - immutable collections - they are not caught by these rules, and instead
       ;; fall through and are caught by the default r/invoke rule, which emits
-      ;; a stringified `conj(...)`, which is handled in our kalai.rs helper fns/method impls
+      ;; a stringified `conj(...)`, which is handled in our kalai.rs helper fns/impl methods
+
+      ;; conj - immutable vector
+      (r/invoke (u/var ~#'conj)
+                (m/and ?coll
+                       (m/app meta {:t {(m/pred #{:vector}) [?value-t]}}))
+                . !arg ...)
+      (r/invoke conj ?coll . (r/ref (m/app #(ru/wrap-value-enum ?value-t %) !arg)) ...)
 
       ;; conj - mutable vectors and sets
       (r/invoke (u/var ~#'conj)

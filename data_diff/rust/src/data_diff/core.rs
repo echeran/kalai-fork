@@ -3,9 +3,9 @@ use crate::kalai::kalai::*;
 pub fn diff_associative_key(a: kalai::BValue, b: kalai::BValue, k: kalai::BValue) -> kalai::BValue {
     let va: kalai::BValue = a.get(&k).unwrap().clone();
     let vb: kalai::BValue = b.get(&k).unwrap().clone();
-    let vec_18690: kalai::BValue = diff(va, vb);
+    let vec_18731: kalai::BValue = diff(va, vb);
     let aa: kalai::BValue = {
-        let get1 = vec_18690.get((0i64 as usize));
+        let get1 = vec_18731.get((0i64 as usize));
         if get1.is_some() {
             get1.unwrap().clone()
         } else {
@@ -13,7 +13,7 @@ pub fn diff_associative_key(a: kalai::BValue, b: kalai::BValue, k: kalai::BValue
         }
     };
     let bb: kalai::BValue = {
-        let get2 = vec_18690.get((1i64 as usize));
+        let get2 = vec_18731.get((1i64 as usize));
         if get2.is_some() {
             get2.unwrap().clone()
         } else {
@@ -21,7 +21,7 @@ pub fn diff_associative_key(a: kalai::BValue, b: kalai::BValue, k: kalai::BValue
         }
     };
     let ab: kalai::BValue = {
-        let get3 = vec_18690.get((2i64 as usize));
+        let get3 = vec_18731.get((2i64 as usize));
         if get3.is_some() {
             get3.unwrap().clone()
         } else {
@@ -197,10 +197,10 @@ pub fn set_diff(a: kalai::BValue, b: kalai::BValue) -> kalai::BValue {
 pub fn vectorize(m: kalai::BValue) -> kalai::BValue {
     if seq(m) {
         return reduce(
-            |result, p_18733| {
-                let vec_18735 = p_18733;
+            |result, p_18774| {
+                let vec_18776 = p_18774;
                 let k: kalai::BValue = {
-                    let get4 = vec_18735.get((0i64 as usize));
+                    let get4 = vec_18776.get((0i64 as usize));
                     if get4.is_some() {
                         get4.unwrap().clone()
                     } else {
@@ -208,7 +208,7 @@ pub fn vectorize(m: kalai::BValue) -> kalai::BValue {
                     }
                 };
                 let v: kalai::BValue = {
-                    let get5 = vec_18735.get((1i64 as usize));
+                    let get5 = vec_18776.get((1i64 as usize));
                     if get5.is_some() {
                         get5.unwrap().clone()
                     } else {

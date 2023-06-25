@@ -1,13 +1,14 @@
 use rpds;
-use std::borrow::Borrow;
+use std::borrow::{Borrow, Cow};
 use std::collections::hash_map::DefaultHasher;
 use std::collections::HashSet;
 use std::collections::{BinaryHeap, HashMap};
 use std::convert::TryInto;
 use std::fmt::Debug;
-use std::hash::{Hash, Hasher};
+use std::hash::{BuildHasher, Hash, Hasher};
 use std::iter::FromIterator;
 use std::ops::{Add, Deref};
+use std::slice::Iter;
 use std::vec::Vec;
 use std::{any, any::Any};
 use std::{fmt, ops};
@@ -72,6 +73,9 @@ pub struct Vector(pub Vec<BValue>);
 
 #[derive(Debug, Clone)]
 pub struct PVector(pub rpds::Vector<BValue>);
+
+#[derive(Debug, Clone)]
+pub struct PEntry(pub rpds::Vector<BValue>);
 
 // implementing Value trait based on SO answer at:
 // https://stackoverflow.com/a/49779676
@@ -141,6 +145,13 @@ where
         Box::new(self.clone())
     }
 }
+
+// impl<'a> CloneValue for PEntry<'a>
+// {
+//     fn clone_value(&self) -> Box<dyn Value> {
+//         Box::new()
+//     }
+// }
 
 impl Clone for Box<dyn Value> {
     fn clone(&self) -> Self {
@@ -356,6 +367,39 @@ impl Value for PVector {
     fn eq_test(&self, other: &dyn Value) -> bool {
         match other.as_any().downcast_ref::<PVector>() {
             Some(vector) => &self.0 == &vector.0,
+            None => false,
+        }
+    }
+}
+
+// wrapper type for map entry from rpds Map
+impl Value for PEntry {
+    fn type_name(&self) -> &'static str {
+        "Pentry"
+    }
+
+    fn hash_id(&self) -> u64 {
+        // TODO: find a more efficient way to create a deterministic contents/value-based hash for a Set (or any collection)
+        // TODO: look into how Clojure hashes collections (ex: map, set)
+        // Note: we use BinaryHeap to order the hash values because hashing is stateful, and therefore, order-dependent.
+        let elem_hashes: BinaryHeap<u64> = self.0.iter().map(|e| e.deref().hash_id()).collect();
+        let sorted_hashes: Vec<u64> = elem_hashes.into_sorted_vec();
+
+        let mut hasher = DefaultHasher::new();
+        for eh in sorted_hashes.iter() {
+            eh.hash(&mut hasher);
+        }
+        let result = hasher.finish();
+        result
+    }
+
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
+
+    fn eq_test(&self, other: &dyn Value) -> bool {
+        match other.as_any().downcast_ref::<PEntry>() {
+            Some(entry) => &self.0 == &entry.0,
             None => false,
         }
     }
@@ -1167,6 +1211,32 @@ impl From<PVector> for BValue {
     }
 }
 
+impl From<BValue> for PEntry {
+    fn from(v: BValue) -> PEntry {
+        if let Some(pentry) = v.as_any().downcast_ref::<PEntry>() {
+            pentry.clone()
+        } else {
+            panic!("Could not downcast Value into PEntry!");
+        }
+    }
+}
+
+impl From<&BValue> for PEntry {
+    fn from(v: &BValue) -> PEntry {
+        if let Some(pentry) = v.as_any().downcast_ref::<PEntry>() {
+            pentry.clone()
+        } else {
+            panic!("Could not downcast Value into PEntry!");
+        }
+    }
+}
+
+impl From<PEntry> for BValue {
+    fn from(e: PEntry) -> BValue {
+        Box::new(e)
+    }
+}
+
 //
 // Float impls
 //
@@ -1316,6 +1386,16 @@ impl PMap {
     pub fn len(&self) -> usize {
         self.0.size()
     }
+
+    pub fn seq(&self) -> impl Iterator<Item = BValue> + '_ {
+        self.0.iter().map(|entry| {
+            BValue::from(PEntry(
+                rpds::Vector::new()
+                    .push_back(entry.0.clone())
+                    .push_back(entry.1.clone()),
+            ))
+        })
+    }
 }
 
 //
@@ -1343,6 +1423,10 @@ impl PSet {
 
     pub fn len(&self) -> usize {
         self.0.size()
+    }
+
+    pub fn seq(&self) -> impl Iterator<Item = BValue> + '_ {
+        self.0.iter().map(|x| x.clone())
     }
 }
 
@@ -1386,14 +1470,35 @@ impl PVector {
     pub fn len(&self) -> usize {
         self.0.len()
     }
+
+    pub fn seq(&self) -> impl Iterator<Item = BValue> + '_ {
+        self.0.iter().map(|x| x.clone())
+    }
 }
+
+//
+// PEntry impls
+//
+
+impl Default for PEntry {
+    fn default() -> PEntry {
+        PEntry(rpds::Vector::<BValue>::new())
+    }
+}
+
+impl PEntry {
+    pub fn key(&self) -> BValue {
+        self.0.first().unwrap().clone()
+    }
+}
+
+//
+// impls of PersistentCollection on collection types
+//
 
 pub trait PersistentCollection: Value {
     fn conj(&self, other: BValue) -> Self;
     fn is_empty(&self) -> bool;
-    fn seq(&self) -> dyn Iterator<Item = BValue> {
-        self.0.clone().into_iter()
-    }
 }
 
 impl PersistentCollection for PMap {
@@ -1513,19 +1618,23 @@ pub fn repeat(n: usize, x: BValue) -> impl Iterator<Item = BValue> {
     std::iter::repeat(x).take(n)
 }
 
-pub fn seq(x: BValue) -> impl Iterator<Item = BValue> {
+pub fn seq<'a>(coll: &'a BValue) -> Box<dyn Iterator<Item = BValue> + 'a> {
     match coll.type_name() {
-        "PMap" => coll.as_any().downcast_ref::<PMap>().unwrap().seq(),
-        "PSet" => coll.as_any().downcast_ref::<PSet>().unwrap().seq(),
-        "PVector" => coll.as_any().downcast_ref::<PVector>().unwrap().seq(),
+        "PMap" => Box::from(coll.as_any().downcast_ref::<PMap>().unwrap().seq()),
+        "PSet" => Box::from(coll.as_any().downcast_ref::<PSet>().unwrap().seq()),
+        "PVector" => Box::from(coll.as_any().downcast_ref::<PVector>().unwrap().seq()),
         _ => {
             panic!("Could not downcast Value into provided Value trait implementing struct types!")
         }
     }
 }
 
-pub fn reduce(f: fn(BValue, BValue) -> BValue, init: BValue, xs: BValue) -> BValue {
-    seq(xs).fold(init, |a, b| conj(a, b));
+pub fn reduce(
+    f: fn(BValue, BValue) -> BValue,
+    init: BValue,
+    xs: impl Iterator<Item = BValue>,
+) -> BValue {
+    xs.fold(init, |a, b| f(a, b))
 }
 
 /* TODO:
@@ -1856,6 +1965,96 @@ mod tests {
         let x = (a + y) as i64;
 
         assert_eq!(x, 30);
+    }
+
+    #[test]
+    fn iterator_test() {
+        let v: rpds::Vector<i64> = rpds::Vector::new().push_back(11).push_back(13);
+        let sum = v.iter().fold(0, |acc, x| acc + x);
+        assert_eq!(sum, 24);
+    }
+
+    #[test]
+    fn iterator_test2() {
+        let pv: rpds::Vector<BValue> = rpds::Vector::new()
+            .push_back(BValue::from(11))
+            .push_back(BValue::from(13));
+        let bv = BValue::from(pv);
+        let s = seq(&bv);
+        let sum = s.fold(0, |acc, x| acc);
+        assert_eq!(sum, 0);
+    }
+
+    #[test]
+    fn iterator_test3() {
+        let pv: rpds::Vector<BValue> = rpds::Vector::new()
+            .push_back(BValue::from(11))
+            .push_back(BValue::from(13));
+        let bv = BValue::from(pv);
+        let s = seq(&bv);
+        let sum = s.fold(0, |acc, x| acc + x.as_any().downcast_ref::<i32>().unwrap());
+        assert_eq!(sum, 24);
+    }
+
+    #[test]
+    fn iterator_test4() {
+        let pv: rpds::Vector<BValue> = rpds::Vector::new()
+            .push_back(BValue::from(11))
+            .push_back(BValue::from(13));
+        let bv = BValue::from(pv);
+        let s = seq(&bv);
+
+        let f = |acc: BValue, x: BValue| {
+            BValue::from(
+                acc.as_any().downcast_ref::<i32>().unwrap()
+                    + x.as_any().downcast_ref::<i32>().unwrap(),
+            )
+        };
+
+        let sum = reduce(f, BValue::from(0_i32), s);
+        let sum_deref = sum.as_any().downcast_ref::<i32>().unwrap();
+        assert_eq!(*sum_deref, 24_i32);
+    }
+
+    #[test]
+    fn iterator_test5() {
+        let ps: rpds::HashTrieSet<BValue> = rpds::HashTrieSet::new()
+            .insert(BValue::from(11))
+            .insert(BValue::from(13));
+        let bv = BValue::from(ps);
+        let s = seq(&bv);
+
+        let f = |acc: BValue, x: BValue| {
+            BValue::from(
+                acc.as_any().downcast_ref::<i32>().unwrap()
+                    + x.as_any().downcast_ref::<i32>().unwrap(),
+            )
+        };
+
+        let sum = reduce(f, BValue::from(0_i32), s);
+        let sum_deref = sum.as_any().downcast_ref::<i32>().unwrap();
+        assert_eq!(*sum_deref, 24_i32);
+    }
+
+    #[test]
+    fn iterator_test6() {
+        let pm: rpds::HashTrieMap<BValue, BValue> = rpds::HashTrieMap::new()
+            .insert(BValue::from(11), BValue::from(String::from("eleventh")))
+            .insert(BValue::from(13), BValue::from(String::from("thirteenth")));
+        let bv = BValue::from(pm);
+        let s = seq(&bv);
+
+        let f = |acc: BValue, e: BValue| {
+            let pe = PEntry::from(e);
+            let key = pe.key();
+            let key_int = key.as_any().downcast_ref::<i32>().unwrap();
+
+            BValue::from(acc.as_any().downcast_ref::<i32>().unwrap() + key_int)
+        };
+
+        let sum = reduce(f, BValue::from(0_i32), s);
+        let sum_deref = sum.as_any().downcast_ref::<i32>().unwrap();
+        assert_eq!(*sum_deref, 24_i32);
     }
 }
 
