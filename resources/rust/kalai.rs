@@ -1,4 +1,4 @@
-use std::borrow::Borrow;
+use std::borrow::{Borrow, Cow};
 use std::collections::hash_map::DefaultHasher;
 use std::collections::HashSet;
 use std::collections::{BinaryHeap, HashMap};
@@ -75,6 +75,9 @@ pub struct Vector(pub Vec<BValue>);
 #[derive(Debug, Clone)]
 pub struct PVector(pub rpds::Vector<BValue>);
 
+#[derive(Debug, Clone)]
+pub struct PEntry<'a>(pub rpds::Vector<Cow<'a, BValue>>);
+
 // implementing Value trait based on SO answer at:
 // https://stackoverflow.com/a/49779676
 
@@ -143,6 +146,13 @@ impl<T> CloneValue for T
         Box::new(self.clone())
     }
 }
+
+// impl<'a> CloneValue for PEntry<'a>
+// {
+//     fn clone_value(&self) -> Box<dyn Value> {
+//         Box::new()
+//     }
+// }
 
 impl Clone for Box<dyn Value> {
     fn clone(&self) -> Self {
@@ -358,6 +368,39 @@ impl Value for PVector {
     fn eq_test(&self, other: &dyn Value) -> bool {
         match other.as_any().downcast_ref::<PVector>() {
             Some(vector) => &self.0 == &vector.0,
+            None => false,
+        }
+    }
+}
+
+// wrapper type for map entry from rpds Map
+impl Value for PEntry<'_> {
+    fn type_name(&self) -> &'static str {
+        "Pentry"
+    }
+
+    fn hash_id(&self) -> u64 {
+        // TODO: find a more efficient way to create a deterministic contents/value-based hash for a Set (or any collection)
+        // TODO: look into how Clojure hashes collections (ex: map, set)
+        // Note: we use BinaryHeap to order the hash values because hashing is stateful, and therefore, order-dependent.
+        let elem_hashes: BinaryHeap<u64> = self.0.iter().map(|e| e.deref().hash_id()).collect();
+        let sorted_hashes: Vec<u64> = elem_hashes.into_sorted_vec();
+
+        let mut hasher = DefaultHasher::new();
+        for eh in sorted_hashes.iter() {
+            eh.hash(&mut hasher);
+        }
+        let result = hasher.finish();
+        result
+    }
+
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
+
+    fn eq_test(&self, other: &dyn Value) -> bool {
+        match other.as_any().downcast_ref::<PEntry>() {
+            Some(entry) => &self.0 == &entry.0,
             None => false,
         }
     }
@@ -1174,6 +1217,35 @@ impl From<PVector> for BValue {
 
 
 
+impl From<BValue> for PEntry<'_> {
+    fn from(v: BValue) -> PEntry<'static> {
+        if let Some(pentry) = v.as_any().downcast_ref::<PEntry>() {
+            pentry.clone()
+        } else {
+            panic!("Could not downcast Value into PEntry!");
+        }
+    }
+}
+
+impl<'a> From<&'a BValue> for PEntry<'a> {
+    fn from(v: &BValue) -> PEntry<'a> {
+        if let Some(pentry) = v.as_any().downcast_ref::<PEntry>() {
+            pentry.clone()
+        } else {
+            panic!("Could not downcast Value into PEntry!");
+        }
+    }
+}
+
+impl From<PEntry<'_>> for BValue {
+    fn from(e: PEntry) -> BValue {
+        Box::new(e)
+    }
+}
+
+
+
+
 //
 // Float impls
 //
@@ -1315,6 +1387,21 @@ impl PMap {
     }
 
     pub fn len(&self) -> usize { self.0.size() }
+
+    pub fn seq(&self) -> impl Iterator<Item = BValue> + '_ {
+            self.0.iter().map(
+                |entry| {
+                    BValue::from(
+                        PEntry(
+                                rpds::Vector::new()
+                                    .push_back(Cow::Owned(entry.0))
+                                    .push_back(Cow::Owned(entry.1))
+
+                        )
+                    )
+                }
+            )
+    }
 }
 
 //
@@ -1341,6 +1428,10 @@ impl PSet {
     }
 
     pub fn len(&self) -> usize { self.0.size() }
+
+    pub fn seq(&self) -> impl Iterator<Item = &BValue> + '_ {
+        self.0.iter()
+    }
 }
 
 //
@@ -1503,16 +1594,28 @@ pub fn repeat(n: usize, x: BValue) -> impl Iterator<Item = BValue> {
     std::iter::repeat(x).take(n)
 }
 
-pub fn seq<'a>(coll: &'a BValue) -> impl Iterator<Item = &BValue> {
+pub fn seq<'a>(coll: &'a BValue) -> Box<dyn Iterator<Item = &BValue> + 'a> {
     match coll.type_name() {
         // "PMap" => coll.as_any().downcast_ref::<PMap>().unwrap().seq(),
-        // "PSet" => coll.as_any().downcast_ref::<PSet>().unwrap().seq(),
-        "PVector" => coll.as_any().downcast_ref::<PVector>().unwrap().seq(),
+        "PSet" => Box::from(coll.as_any().downcast_ref::<PSet>().unwrap().seq()),
+        "PVector" => Box::from(coll.as_any().downcast_ref::<PVector>().unwrap().seq()),
         _ => {
             panic!("Could not downcast Value into provided Value trait implementing struct types!")
         }
     }
 }
+
+pub fn map_seq<'a>(coll: &'a BValue) -> Box<dyn Iterator<Item = (&BValue, &BValue)> + 'a> {
+    match coll.type_name() {
+        "PMap" => coll.as_any().downcast_ref::<PMap>().unwrap().seq(),
+        // "PSet" => Box::from(coll.as_any().downcast_ref::<PSet>().unwrap().seq()),
+        // "PVector" => Box::from(coll.as_any().downcast_ref::<PVector>().unwrap().seq()),
+        _ => {
+            panic!("Could not downcast Value into provided Value trait implementing struct types!")
+        }
+    }
+}
+
 
 pub fn reduce<'a>(f: fn(BValue, &'a BValue) -> BValue, init: BValue, xs: impl Iterator<Item = &'a BValue>) -> BValue {
     xs.fold(init, |a, b| f(a, b))
@@ -1892,8 +1995,25 @@ mod tests {
         let bv = BValue::from(pv);
         let s = seq(&bv);
 
-        // TODO: we want reduce() to do the unwrapping, we don't want the lambda passed to
-        // reduce() to do the unwrapping, so that the lambda can be in terms of values
+        let f = |acc: BValue, x: &BValue|
+            BValue::from(
+                acc.as_any().downcast_ref::<i32>().unwrap()
+                    + x.as_any().downcast_ref::<i32>().unwrap()
+            );
+
+
+        let sum = reduce(f,BValue::from(0_i32),s);
+        let sum_deref = sum.as_any().downcast_ref::<i32>().unwrap();
+        assert_eq!(*sum_deref, 24_i32);
+    }
+
+    #[test]
+    fn iterator_test5() {
+        let pv: rpds::HashTrieSet<BValue> = rpds::HashTrieSet::new()
+            .insert(BValue::from(11))
+            .insert(BValue::from(13));
+        let bv = BValue::from(pv);
+        let s = seq(&bv);
 
         let f = |acc: BValue, x: &BValue|
             BValue::from(
@@ -1906,5 +2026,4 @@ mod tests {
         let sum_deref = sum.as_any().downcast_ref::<i32>().unwrap();
         assert_eq!(*sum_deref, 24_i32);
     }
-}
 }
