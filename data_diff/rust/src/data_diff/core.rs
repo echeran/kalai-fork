@@ -1,29 +1,29 @@
 use crate::kalai::kalai;
 use crate::kalai::kalai::*;
 pub fn diff_associative_key(a: kalai::BValue, b: kalai::BValue, k: kalai::BValue) -> kalai::BValue {
-    let va: kalai::BValue = a.get(&k).unwrap().clone();
-    let vb: kalai::BValue = b.get(&k).unwrap().clone();
-    let vec_18731: kalai::BValue = diff(va, vb);
+    let va: kalai::BValue = kalai::get(a, k);
+    let vb: kalai::BValue = kalai::get(b, k);
+    let vec_18716: kalai::BValue = diff(va, vb);
     let aa: kalai::BValue = {
-        let get1 = vec_18731.get((0i64 as usize));
+        let get1 = get(vec_18716, kalai::BValue::from(0i64));
         if get1.is_some() {
-            get1.unwrap().clone()
+            get1
         } else {
             kalai::BValue::from(kalai::NIL)
         }
     };
     let bb: kalai::BValue = {
-        let get2 = vec_18731.get((1i64 as usize));
+        let get2 = get(vec_18716, kalai::BValue::from(1i64));
         if get2.is_some() {
-            get2.unwrap().clone()
+            get2
         } else {
             kalai::BValue::from(kalai::NIL)
         }
     };
     let ab: kalai::BValue = {
-        let get3 = vec_18731.get((2i64 as usize));
+        let get3 = get(vec_18716, kalai::BValue::from(2i64));
         if get3.is_some() {
-            get3.unwrap().clone()
+            get3
         } else {
             kalai::BValue::from(kalai::NIL)
         }
@@ -197,20 +197,20 @@ pub fn set_diff(a: kalai::BValue, b: kalai::BValue) -> kalai::BValue {
 pub fn vectorize(m: kalai::BValue) -> kalai::BValue {
     if seq(m) {
         return reduce(
-            |result, p_18774| {
-                let vec_18776 = p_18774;
+            |result, p_18759| {
+                let vec_18761 = p_18759;
                 let k: kalai::BValue = {
-                    let get4 = vec_18776.get((0i64 as usize));
+                    let get4 = get(vec_18761, kalai::BValue::from(0i64));
                     if get4.is_some() {
-                        get4.unwrap().clone()
+                        get4
                     } else {
                         kalai::BValue::from(kalai::NIL)
                     }
                 };
                 let v: kalai::BValue = {
-                    let get5 = vec_18776.get((1i64 as usize));
+                    let get5 = get(vec_18761, kalai::BValue::from(1i64));
                     if get5.is_some() {
-                        get5.unwrap().clone()
+                        get5
                     } else {
                         kalai::BValue::from(kalai::NIL)
                     }

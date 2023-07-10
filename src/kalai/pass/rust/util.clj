@@ -42,18 +42,42 @@
           (str \_ snake-case)
           snake-case)))))
 
-(defn fully-qualified-function-identifier-str [function-name class-function-separator]
+(defn fully-qualified-function-identifier-str
+  "Take a fully qualified Clojure var representing a function (`function-name`) and convert it
+  into the target language appropriate version of a fully qualified function name.
+  The target language will have notation for separating segments of the fully qualified
+  name (`class-function-separator`).
+  If the function var is in the `clojure.lang.RT` namespace, then return the base name
+  segment as the function name, qualified by `kalai::`
+  (ex: `clojure.lang.RT/get` -> `kalai::get`)."
+  [function-name class-function-separator]
   (if (string? function-name)
     function-name
-    (let [varmeta (some-> function-name meta :var meta)]
-      (if (and (str/includes? (str function-name) "/") varmeta)
-        ;; For now, we interpret the "/" to indicate that the function being transpiled is
-        ;; either from Kalai or the user, and therefore, it has a namespace. We need to
-        ;; handle the Rust snake-casing segment-by-segment when applying `identifier`.
-        (let [clojure-ns-by-dot (str/split (str (:ns varmeta)) #"\.")
+    (let [varmeta (some-> function-name meta :var meta)
+          name-of-ns (namespace function-name)]
+      (cond
+
+        (= "clojure.lang.RT" name-of-ns)
+        (str "kalai::" (name function-name))
+
+        ;; If the function being transpiled is either from Kalai or the user, we assume it has a namespace.
+        ;; We need to handle the Rust snake-casing segment-by-segment when applying `identifier`.
+        name-of-ns
+        (let [fn-ns-name (if varmeta
+                           (str (:ns varmeta))
+                           name-of-ns)
+              clojure-ns-by-dot (str/split fn-ns-name #"\.")
               rustified-ns-by-dot (map identifier clojure-ns-by-dot)
-              rustified-ns (str/join "." rustified-ns-by-dot)]
+              rustified-ns (str/join "." rustified-ns-by-dot)
+              fn-base-name (if varmeta
+                             (:name varmeta)
+                             (name function-name))]
           (str "crate::"
                (str/replace rustified-ns "." "::") ;; we use varmeta because we want the full ns, not an alias
-               class-function-separator (identifier (:name varmeta))))
+               class-function-separator (identifier fn-base-name)))
+
+        ;; This path is expected to be run for user-specific external Rust crate symbols that come from
+        ;; hard-coded dependencies. In such a case, we assume that the user has provided the fully-qualified
+        ;; Rust symbol from the dependency as a string, ex: `"external_dep::module::fn_symbol"`.
+        :else
         (str (identifier function-name))))))

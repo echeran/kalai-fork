@@ -106,6 +106,9 @@ pub trait Value: Debug + CloneValue {
     fn is_type(&self, type_str: &str) -> bool {
         type_str == self.type_name()
     }
+    fn is_some(&self) -> bool {
+        self != NIL
+    }
 }
 
 impl Hash for dyn Value {
@@ -1396,6 +1399,10 @@ impl PMap {
             ))
         })
     }
+
+    pub fn dissoc(&self, k: BValue) -> PMap {
+        PMap(self.0.remove(k))
+    }
 }
 
 //
@@ -1413,6 +1420,10 @@ impl PSet {
         PSet(self.0.insert(x))
     }
 
+    pub fn get(&self, k: &BValue) -> Option<&BValue> {
+        self.0.get(k)
+    }
+
     pub fn contains(&self, x: &BValue) -> bool {
         self.0.contains(x)
     }
@@ -1427,6 +1438,10 @@ impl PSet {
 
     pub fn seq(&self) -> impl Iterator<Item = BValue> + '_ {
         self.0.iter().map(|x| x.clone())
+    }
+
+    pub fn disj(&self, v: BValue) -> PSet {
+        PSet(self.0.remove(v))
     }
 }
 
@@ -1562,6 +1577,42 @@ pub fn conj(coll: BValue, x: BValue) -> BValue {
         _ => {
             panic!("Could not downcast Value into provided Value trait implementing struct types!")
         }
+    }
+}
+
+pub fn disj(coll: BValue, x: BValue) -> BValue {
+    match coll.type_name() {
+        "PSet" => BValue::from(coll.as_any().downcast_ref::<PSet>().unwrap().disj(x)),
+        _ => {
+            panic!("Could not downcast Value into provided Value trait implementing struct types!")
+        }
+    }
+}
+
+pub fn dissoc(coll: BValue, x: BValue) -> BValue {
+    match coll.type_name() {
+        "PMap" => BValue::from(coll.as_any().downcast_ref::<PMap>().unwrap().dissoc(x)),
+        _ => {
+            panic!("Could not downcast Value into provided Value trait implementing struct types!")
+        }
+    }
+}
+
+pub fn get(coll: BValue, x: BValue) -> BValue {
+    let result = match coll.type_name() {
+        "PMap" => BValue::from(coll.as_any().downcast_ref::<PMap>().unwrap().get(x)),
+        "PSet" => BValue::from(coll.as_any().downcast_ref::<PSet>().unwrap().get(x)),
+        "PVector" => {
+            let idx = x.as_any().downcast_ref::<usize>().unwrap();
+            BValue::from(coll.as_any().downcast_ref::<PVector>().unwrap().get(idx))
+        }
+        _ => {
+            panic!("Could not downcast Value into provided Value trait implementing struct types!")
+        }
+    };
+    match result {
+        Some(x) => x.clone(),
+        None => NIL,
     }
 }
 

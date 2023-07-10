@@ -128,18 +128,20 @@
         ;; type, which as a Rust-specific type, we cannot/do not want to express in Kalai.
         (m/let [?get (u/gensym2 "get")]))
       (r/block
-        (r/init ?get (r/method get ?x (r/cast ?n :usize)))
+        (r/init ?get (r/invoke get ?x (r/value ?n)))
         (r/if (r/method is_some ?get)
-          (r/block (r/method clone (r/method unwrap ?get)))
+          (r/block ?get)
           (r/block ?not-found)))
 
       ;; TODO: for vectors, we should detect the vector type and do a
       ;; cast of the index argument to `usize` like we do for `nth`
-      (r/invoke clojure.lang.RT/get ?x ?k)
-      (r/method clone (r/method unwrap (r/method get ?x (r/ref ?k))))
 
-      (r/invoke clojure.lang.RT/get ?x ?k ?default)
-      (r/method clone (r/method unwrap_or (r/method get ?x (r/ref ?k)) (r/ref ?default)))
+      ;; converting get from a method to a function like for `conj`, `disj`, ...
+      ;;(r/invoke clojure.lang.RT/get ?x ?k)
+      ;;(r/method clone (r/method unwrap (r/method get ?x (r/ref ?k))))
+      ;;
+      ;;(r/invoke clojure.lang.RT/get ?x ?k ?default)
+      ;;(r/method clone (r/method unwrap_or (r/method get ?x (r/ref ?k)) (r/ref ?default)))
 
       (r/invoke (u/var ~#'contains?) ?coll ?x)
       (r/method contains_key ?coll (r/ref ?x))
