@@ -249,7 +249,10 @@
   ([test then]
    (line-separated
      (space-separated 'if (stringify test))
-     (stringify then)))
+     (stringify then)
+     'else
+     (block-str
+       nil)))
   ([test then else]
    (line-separated
      (space-separated 'if (stringify test))

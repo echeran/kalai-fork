@@ -28,24 +28,28 @@ pub fn diff_associative_key(a: kalai::BValue, b: kalai::BValue, k: kalai::BValue
             kalai::BValue::from(kalai::NIL)
         }
     };
-    let in_a: kalai::BValue = a.contains_key(&k);
-    let in_b: kalai::BValue = b.contains_key(&k);
-    let same = {
-        let and_5579_auto = in_a;
-        if and_5579_auto {
-            let and_5579_auto = in_b;
+    let in_a: bool = contains(a, k);
+    let in_b: bool = contains(b, k);
+    let d: bool = !ab.is_type("Nil");
+    let c: bool = {
+        let or_5581_auto: bool = d;
+        if or_5581_auto {
+            or_5581_auto
+        } else {
+            let and_5579_auto: bool = va.is_type("Nil");
             if and_5579_auto {
-                let or_5581_auto: kalai::BValue = !ab.is_type("Nil");
-                if or_5581_auto {
-                    or_5581_auto
-                } else {
-                    let and_5579_auto: bool = va.is_type("Nil");
-                    if and_5579_auto {
-                        vb.is_type("Nil")
-                    } else {
-                        and_5579_auto
-                    }
-                }
+                vb.is_type("Nil")
+            } else {
+                and_5579_auto
+            }
+        }
+    };
+    let same: bool = {
+        let and_5579_auto: bool = in_a;
+        if and_5579_auto {
+            let and_5579_auto: bool = in_b;
+            if and_5579_auto {
+                c
             } else {
                 and_5579_auto
             }
@@ -53,46 +57,60 @@ pub fn diff_associative_key(a: kalai::BValue, b: kalai::BValue, k: kalai::BValue
             and_5579_auto
         }
     };
-    return kalai::BValue::new()
+    let e: bool = !aa.is_type("Nil");
+    let f: bool = !bb.is_type("Nil");
+    let g: bool = {
+        let or_5581_auto: bool = e;
+        if or_5581_auto {
+            or_5581_auto
+        } else {
+            !same
+        }
+    };
+    let h: bool = {
+        let or_5581_auto: bool = f;
+        if or_5581_auto {
+            or_5581_auto
+        } else {
+            !same
+        }
+    };
+    return rpds::Vector::new()
         .push_back(
             if {
-                let and_5579_auto = in_a;
+                let and_5579_auto: bool = in_a;
                 if and_5579_auto {
-                    let or_5581_auto: kalai::BValue = !aa.is_type("Nil");
-                    if or_5581_auto {
-                        or_5581_auto
-                    } else {
-                        !same
-                    }
+                    g
                 } else {
                     and_5579_auto
                 }
             } {
-                kalai::BValue::new().insert(k.clone(), aa.clone())
+                rpds::HashTrieMap::new().insert(k.clone(), aa.clone())
+            } else {
+                kalai::BValue::from(kalai::NIL)
             }
             .clone(),
         )
         .push_back(
             if {
-                let and_5579_auto = in_b;
+                let and_5579_auto: bool = in_b;
                 if and_5579_auto {
-                    let or_5581_auto: kalai::BValue = !bb.is_type("Nil");
-                    if or_5581_auto {
-                        or_5581_auto
-                    } else {
-                        !same
-                    }
+                    h
                 } else {
                     and_5579_auto
                 }
             } {
-                kalai::BValue::new().insert(k.clone(), bb.clone())
+                rpds::HashTrieMap::new().insert(k.clone(), bb.clone())
+            } else {
+                kalai::BValue::from(kalai::NIL)
             }
             .clone(),
         )
         .push_back(
             if same {
-                kalai::BValue::new().insert(k.clone(), ab.clone())
+                rpds::HashTrieMap::new().insert(k.clone(), ab.clone())
+            } else {
+                kalai::BValue::from(kalai::NIL)
             }
             .clone(),
         );
@@ -126,7 +144,7 @@ pub fn difference(s1: kalai::BValue, s2: kalai::BValue) -> kalai::BValue {
     if ((s1.len() as i32) < (s2.len() as i32)) {
         return reduce(
             |result, item| {
-                if s2.contains_key(&item) {
+                if contains(s2, item) {
                     return result.remove(item);
                 } else {
                     return result;
@@ -145,7 +163,7 @@ pub fn intersection(s1: kalai::BValue, s2: kalai::BValue) -> kalai::BValue {
     } else {
         return reduce(
             |result, item| {
-                if s2.contains_key(&item) {
+                if contains(s2, item) {
                     return result;
                 } else {
                     return result.remove(item);

@@ -144,7 +144,7 @@
       ;;(r/method clone (r/method unwrap_or (r/method get ?x (r/ref ?k)) (r/ref ?default)))
 
       (r/invoke (u/var ~#'contains?) ?coll ?x)
-      (r/method contains_key ?coll (r/ref ?x))
+      (r/invoke contains ?coll ?x)
 
       (r/invoke (u/var ~#'assoc)
                 (m/and ?coll

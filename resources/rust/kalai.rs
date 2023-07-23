@@ -1619,6 +1619,20 @@ pub fn keys(m: BValue) -> BValue {
     }
 }
 
+pub fn contains(coll: BValue, k: BValue) -> bool {
+    match coll.type_name() {
+        "PMap" =>
+            coll.as_any().downcast_ref::<PMap>().unwrap().0.contains_key(k),
+        "PSet" => coll.as_any().downcast_ref::<PSet>().unwrap().0.contains(k),
+        "PVector" => {
+            let count: usize = coll.as_any().downcast_ref::<PVector>().unwrap().0.len();
+            let idx: usize = k.as_any().downcast_ref::<i64>().unwrap() as usize;
+            idx < count  // usize implies non-negative
+        },
+        _ => panic!("Could not get keys() from BValue of type {}!", coll.type_name()),
+    }
+}
+
 pub fn is_empty(coll: BValue) -> bool {
     match coll.type_name() {
         "PMap" => coll.as_any().downcast_ref::<PMap>().unwrap().is_empty(),

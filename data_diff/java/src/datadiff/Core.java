@@ -37,45 +37,24 @@ tmp45 = vec__18716.get();
 }
 }
 final Object ab = tmp45;
-final Object inA = a.containsKey(k);
-final Object inB = b.containsKey(k);
-final TYPE_MISSING and5579Auto = inA;
-"MISSING_TYPE" tmp1;
-boolean tmp2 = and__5579__auto__;
+final boolean inA = a.containsKey(k);
+final boolean inB = b.containsKey(k);
+final boolean d = !(ab == null);
+final boolean or5581Auto = d;
+boolean tmp1;
+boolean tmp2 = or__5581__auto__;
 if (tmp2)
 {
-final TYPE_MISSING and5579Auto = inB;
-"MISSING_TYPE" tmp3;
-boolean tmp4 = and__5579__auto__;
-if (tmp4)
-{
-final Object or5581Auto = !(ab == null);
-"MISSING_TYPE" tmp5;
-boolean tmp6 = or__5581__auto__;
-if (tmp6)
-{
-tmp5 = or__5581__auto__;
+tmp1 = or__5581__auto__;
 }
 else
 {
 final boolean and5579Auto = (va == null);
-"MISSING_TYPE" tmp7;
-boolean tmp8 = and__5579__auto__;
-if (tmp8)
+"MISSING_TYPE" tmp3;
+boolean tmp4 = and__5579__auto__;
+if (tmp4)
 {
-tmp7 = (vb == null);
-}
-else
-{
-tmp7 = and__5579__auto__;
-}
-{
-tmp5 = tmp7;
-}
-}
-{
-tmp3 = tmp5;
-}
+tmp3 = (vb == null);
 }
 else
 {
@@ -85,78 +64,99 @@ tmp3 = and__5579__auto__;
 tmp1 = tmp3;
 }
 }
-else
+final boolean c = tmp1;
+final boolean and5579Auto = inA;
+boolean tmp5;
+boolean tmp6 = and__5579__auto__;
+if (tmp6)
 {
-tmp1 = and__5579__auto__;
-}
-final TYPE_MISSING same = tmp1;
-clojure.lang.PersistentArrayMap tmp9;
-final TYPE_MISSING and5579Auto = inA;
-"MISSING_TYPE" tmp11;
-boolean tmp12 = and__5579__auto__;
-if (tmp12)
+final boolean and5579Auto = inB;
+boolean tmp7;
+boolean tmp8 = and__5579__auto__;
+if (tmp8)
 {
-final Object or5581Auto = !(aa == null);
-"MISSING_TYPE" tmp13;
-boolean tmp14 = or__5581__auto__;
-if (tmp14)
-{
-tmp13 = or__5581__auto__;
+tmp7 = c;
 }
 else
 {
-tmp13 = !same;
+tmp7 = and__5579__auto__;
 }
 {
-tmp11 = tmp13;
+tmp5 = tmp7;
 }
 }
 else
 {
-tmp11 = and__5579__auto__;
+tmp5 = and__5579__auto__;
 }
-boolean tmp10 = tmp11;
+final boolean same = tmp5;
+final boolean e = !(aa == null);
+final boolean f = !(bb == null);
+final boolean or5581Auto = e;
+boolean tmp9;
+boolean tmp10 = or__5581__auto__;
 if (tmp10)
 {
-tmp9 = new TYPE_MISSING().put(k, aa, io.lacuna.bifurcan.Maps.MERGE_LAST_WRITE_WINS);
-}
-clojure.lang.PersistentArrayMap tmp15;
-final TYPE_MISSING and5579Auto = inB;
-"MISSING_TYPE" tmp17;
-boolean tmp18 = and__5579__auto__;
-if (tmp18)
-{
-final Object or5581Auto = !(bb == null);
-"MISSING_TYPE" tmp19;
-boolean tmp20 = or__5581__auto__;
-if (tmp20)
-{
-tmp19 = or__5581__auto__;
+tmp9 = or__5581__auto__;
 }
 else
 {
-tmp19 = !same;
+tmp9 = !same;
 }
+final boolean g = tmp9;
+final boolean or5581Auto = f;
+boolean tmp11;
+boolean tmp12 = or__5581__auto__;
+if (tmp12)
 {
-tmp17 = tmp19;
-}
+tmp11 = or__5581__auto__;
 }
 else
 {
-tmp17 = and__5579__auto__;
+tmp11 = !same;
 }
-boolean tmp16 = tmp17;
+final boolean h = tmp11;
+io.lacuna.bifurcan.Map<Object,Object> tmp13;
+final boolean and5579Auto = inA;
+boolean tmp15;
+boolean tmp16 = and__5579__auto__;
 if (tmp16)
 {
-tmp15 = new TYPE_MISSING().put(k, bb, io.lacuna.bifurcan.Maps.MERGE_LAST_WRITE_WINS);
+tmp15 = g;
 }
-clojure.lang.PersistentArrayMap tmp21;
+else
+{
+tmp15 = and__5579__auto__;
+}
+boolean tmp14 = tmp15;
+if (tmp14)
+{
+tmp13 = new io.lacuna.bifurcan.Map<Object,Object>().put(k, aa, io.lacuna.bifurcan.Maps.MERGE_LAST_WRITE_WINS);
+}
+io.lacuna.bifurcan.Map<Object,Object> tmp17;
+final boolean and5579Auto = inB;
+boolean tmp19;
+boolean tmp20 = and__5579__auto__;
+if (tmp20)
+{
+tmp19 = h;
+}
+else
+{
+tmp19 = and__5579__auto__;
+}
+boolean tmp18 = tmp19;
+if (tmp18)
+{
+tmp17 = new io.lacuna.bifurcan.Map<Object,Object>().put(k, bb, io.lacuna.bifurcan.Maps.MERGE_LAST_WRITE_WINS);
+}
+io.lacuna.bifurcan.Map<Object,Object> tmp21;
 boolean tmp22 = same;
 if (tmp22)
 {
-tmp21 = new TYPE_MISSING().put(k, ab, io.lacuna.bifurcan.Maps.MERGE_LAST_WRITE_WINS);
+tmp21 = new io.lacuna.bifurcan.Map<Object,Object>().put(k, ab, io.lacuna.bifurcan.Maps.MERGE_LAST_WRITE_WINS);
 }
-return new TYPE_MISSING().addLast(tmp9).addLast(tmp15).addLast(tmp21);
+return new io.lacuna.bifurcan.List<Object>().addLast(tmp13).addLast(tmp17).addLast(tmp21);
 }
 public static final TYPE_MISSING merge2(final TYPE_MISSING m1, final TYPE_MISSING m2) {
 return kalai.Kalai.foldLeft(m2, m1, conj);

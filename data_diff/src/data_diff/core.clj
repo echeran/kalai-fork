@@ -8,16 +8,26 @@
   (let [va (get a k)
         vb (get b k)
         [aa bb ab] (diff va vb)
-        in-a (contains? a k)
-        in-b (contains? b k)
-        same (and in-a in-b
-                  (or (not (nil? ab))
-                      (and (nil? va) (nil? vb))))]
+        ^boolean in-a (contains? a k)
+        ^boolean in-b (contains? b k)
+        ^boolean d (not ^boolean (nil? ab))
+        ^boolean c  (or d
+                        ^boolean (and ^boolean (nil? va)
+                                      ^boolean (nil? vb)))
+        ^boolean same (and in-a
+                           in-b
+                           c)
+        ^boolean e (not (nil? aa))
+        ^boolean f (not (nil? bb))
+        ^boolean g (or e ^boolean (not same))
+        ^boolean h (or f ^boolean (not same))]
     ;; TODO: this produces weird nonsense `if` when p and q are inline
     ;; TODO: create a simpler test that recreates by having a boolean expression in an if or when block
-    [(when (and in-a (or (not (nil? aa)) (not same))) {k aa})
-     (when (and in-b (or (not (nil? bb)) (not same))) {k bb})
-     (when same {k ab})]))
+
+    ^{:t {:vector [:any]}}
+       [(when (and in-a g) ^{:t {:map [:any :any]}} {k aa})
+        (when (and in-b h) ^{:t {:map [:any :any]}} {k bb})
+        (when same ^{:t {:map [:any :any]}} {k ab})]))
 
 (defn merge2
   "A helper function to replace `merge` with `(reduce conj...)`"
