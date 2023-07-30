@@ -34,14 +34,15 @@
   [?fn arg-count]
   (if (fn-var? ?fn)
     (let [args (mapv symbol (map str (take arg-count "abcdefghikjlmnopqrstuvwxyz")))]
-      (list 'r/lambda
-            args
-            (list 'r/block
-                  (rewrite (list* (if (u/operator-symbols ?fn)
-                                    'r/operator
-                                    'r/invoke)
-                                  ?fn
-                                  args)))))
+      (list 'r/block
+            (list 'r/lambda
+                  args
+                  (list 'r/block
+                        (rewrite (list* (if (u/operator-symbols ?fn)
+                                          'r/operator
+                                          'r/invoke)
+                                        ?fn
+                                        args))))))
     ?fn))
 
 (def rewrite
@@ -109,8 +110,13 @@
       (r/invoke clojure.lang.RT/count (u/of-t :string ?x))
       (r/cast (r/method count (r/method chars ?x)) :int)
 
-      (r/invoke clojure.lang.RT/count ?x)
-      (r/cast (r/method ~(count-for ?x) ?x) :int)
+      ;; TODO: uncomment and figure out how to renable `count` for non-BValues
+
+      ;;;; When `count` is applied to a BValue (:any), we want it to fall through
+      ;;;; and use the polymorphic helper function in kalai.rs
+      ;;(r/invoke clojure.lang.RT/count (m/and ?x
+      ;;                                       (m/app meta {:t (m/pred (complement #{:any nil}))})))
+      ;;(r/cast (r/method ~(count-for ?x) ?x) :int)
 
       (r/invoke clojure.lang.Numbers/max ?x ?y)
       (r/invoke max ?x ?y)
@@ -223,15 +229,15 @@
 
       (r/invoke (u/var ~#'map) ?fn ?xs)
       (r/method map
-                (r/method into_iter (r/method clone ?xs))
+                ?xs
                 ~(maybe-lambda ?fn 1))
 
       (r/invoke (u/var ~#'map) ?fn ?xs ?ys)
       (r/method map
                 (r/invoke "std::iter::zip" ?xs ?ys)
-                (r/lambda [t] (r/block (r/invoke ~(maybe-lambda ?fn 2)
-                                                 (r/field 0 t)
-                                                 (r/field 1 t)))))
+                (r/lambda [t] (r/invoke ~(maybe-lambda ?fn 2)
+                                        (r/field 0 t)
+                                        (r/field 1 t))))
 
       ;; reduce - immutable collections - they are not caught by these rules, and instead
       ;; fall through and are caught by the default r/invoke rule, which emits

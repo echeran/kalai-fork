@@ -9,31 +9,31 @@ public class Core {
 public static final TYPE_MISSING diffAssociativeKey(final TYPE_MISSING a, final TYPE_MISSING b, final TYPE_MISSING k) {
 final Object va = a.get(k);
 final Object vb = b.get(k);
-final Object vec18716 = diff(va, vb);
+final Object vec18709 = diff(va, vb);
 Object tmp43 = null;
 if ((0L <= 0L))
 {
-if ((0L < vec__18716.length()))
+if ((0L < vec__18709.length()))
 {
-tmp43 = vec__18716.get();
+tmp43 = vec__18709.get();
 }
 }
 final Object aa = tmp43;
 Object tmp44 = null;
 if ((0L <= 1L))
 {
-if ((1L < vec__18716.length()))
+if ((1L < vec__18709.length()))
 {
-tmp44 = vec__18716.get();
+tmp44 = vec__18709.get();
 }
 }
 final Object bb = tmp44;
 Object tmp45 = null;
 if ((0L <= 2L))
 {
-if ((2L < vec__18716.length()))
+if ((2L < vec__18709.length()))
 {
-tmp45 = vec__18716.get();
+tmp45 = vec__18709.get();
 }
 }
 final Object ab = tmp45;
@@ -131,7 +131,7 @@ tmp15 = and__5579__auto__;
 boolean tmp14 = tmp15;
 if (tmp14)
 {
-tmp13 = new io.lacuna.bifurcan.Map<Object,Object>().put(k, aa, io.lacuna.bifurcan.Maps.MERGE_LAST_WRITE_WINS);
+tmp13 = (Object)new io.lacuna.bifurcan.Map<Object,Object>().put(k, aa, io.lacuna.bifurcan.Maps.MERGE_LAST_WRITE_WINS);
 }
 io.lacuna.bifurcan.Map<Object,Object> tmp17;
 final boolean and5579Auto = inB;
@@ -148,24 +148,24 @@ tmp19 = and__5579__auto__;
 boolean tmp18 = tmp19;
 if (tmp18)
 {
-tmp17 = new io.lacuna.bifurcan.Map<Object,Object>().put(k, bb, io.lacuna.bifurcan.Maps.MERGE_LAST_WRITE_WINS);
+tmp17 = (Object)new io.lacuna.bifurcan.Map<Object,Object>().put(k, bb, io.lacuna.bifurcan.Maps.MERGE_LAST_WRITE_WINS);
 }
 io.lacuna.bifurcan.Map<Object,Object> tmp21;
 boolean tmp22 = same;
 if (tmp22)
 {
-tmp21 = new io.lacuna.bifurcan.Map<Object,Object>().put(k, ab, io.lacuna.bifurcan.Maps.MERGE_LAST_WRITE_WINS);
+tmp21 = (Object)new io.lacuna.bifurcan.Map<Object,Object>().put(k, ab, io.lacuna.bifurcan.Maps.MERGE_LAST_WRITE_WINS);
 }
-return new io.lacuna.bifurcan.List<Object>().addLast(tmp13).addLast(tmp17).addLast(tmp21);
+return (Object)new io.lacuna.bifurcan.List<Object>().addLast(tmp13).addLast(tmp17).addLast(tmp21);
 }
 public static final TYPE_MISSING merge2(final TYPE_MISSING m1, final TYPE_MISSING m2) {
-return kalai.Kalai.foldLeft(m2, m1, conj);
+return kalai.Kalai.foldLeft(m2.stream(), m1, conj);
 }
 public static final TYPE_MISSING diffAssociative(final TYPE_MISSING a, final TYPE_MISSING b, final TYPE_MISSING ks) {
 return kalai.Kalai.foldLeft(ks.stream().map((k) -> {
 return diffAssociativeKey(a, b, k);
-}), new TYPE_MISSING().addLast(null).addLast(null).addLast(null), (diff1, diff2) -> {
-return doall(kalai.Kalai.map((a, b) -> {
+}), (Object)new io.lacuna.bifurcan.List<Object>().addLast(null).addLast(null).addLast(null), (diff1, diff2) -> {
+return (Object)vec(kalai.Kalai.map((a, b) -> {
 return merge2(a, b);
 }, diff1.stream(), diff2.stream()));
 });
@@ -275,24 +275,24 @@ if (tmp32)
 Object tmp46 = null;
 if ((0L <= 0L))
 {
-if ((0L < vec__18761.length()))
+if ((0L < vec__18754.length()))
 {
-tmp46 = vec__18761.get();
+tmp46 = vec__18754.get();
 }
 }
 Object tmp47 = null;
 if ((0L <= 1L))
 {
-if ((1L < vec__18761.length()))
+if ((1L < vec__18754.length()))
 {
-tmp47 = vec__18761.get();
+tmp47 = vec__18754.get();
 }
 }
 {
 return kalai.Kalai.foldLeft(m, vec(repeat(keys(m).stream().reduce((a, b) -> {
 return max(a, b);
-}).get(), null)), (result, p__18759) -> {
-final TYPE_MISSING vec18761 = p__18759;
+}).get(), null)), (result, p__18752) -> {
+final TYPE_MISSING vec18754 = p__18752;
 final Object k = tmp46;
 final Object v = tmp47;
 return result.put(k, v);

@@ -24,15 +24,15 @@
     ;; TODO: this produces weird nonsense `if` when p and q are inline
     ;; TODO: create a simpler test that recreates by having a boolean expression in an if or when block
 
-    ^{:t {:vector [:any]}}
-       [(when (and in-a g) ^{:t {:map [:any :any]}} {k aa})
-        (when (and in-b h) ^{:t {:map [:any :any]}} {k bb})
-        (when same ^{:t {:map [:any :any]}} {k ab})]))
+    ^{:t {:vector [:any]} :cast :any}
+       [(when (and in-a g) ^{:t {:map [:any :any]} :cast :any} {k aa})
+        (when (and in-b h) ^{:t {:map [:any :any]} :cast :any} {k bb})
+        (when same ^{:t {:map [:any :any]} :cast :any} {k ab})]))
 
 (defn merge2
   "A helper function to replace `merge` with `(reduce conj...)`"
   [m1 m2]
-  (reduce conj m1 m2))
+  (reduce conj m1 (seq m2)))
 
 (defn diff-associative
   "Diff associative things a and b, comparing only keys in ks."
@@ -40,8 +40,8 @@
   (reduce
     (fn [diff1 diff2]
       ;; TODO: move the explict seq calls into function_call
-      (doall (map merge2 (seq diff1) (seq diff2))))
-    [nil nil nil]
+      ^{:cast :any} (vec (map merge2 (seq diff1) (seq diff2))))
+    ^{:t {:vector [:any]} :cast :any} [nil nil nil]
     (map (fn [k]
            (diff-associative-key a b k))
          (seq ks))))

@@ -1672,11 +1672,23 @@ pub fn repeat(n: usize, x: BValue) -> impl Iterator<Item = BValue> {
     std::iter::repeat(x).take(n)
 }
 
-pub fn seq<'a>(coll: &'a BValue) -> Box<dyn Iterator<Item = BValue> + 'a> {
+pub fn seq(coll: BValue) -> Box<dyn Iterator<Item = BValue>> {
     match coll.type_name() {
         "PMap" => Box::from(coll.as_any().downcast_ref::<PMap>().unwrap().seq()),
         "PSet" => Box::from(coll.as_any().downcast_ref::<PSet>().unwrap().seq()),
         "PVector" => Box::from(coll.as_any().downcast_ref::<PVector>().unwrap().seq()),
+        _ => {
+            panic!("Could not downcast Value into provided Value trait implementing struct types!")
+        }
+    }
+}
+
+pub fn count(coll: BValue) -> usize {
+    match coll.type_name() {
+        "PMap" => Box::from(coll.as_any().downcast_ref::<PMap>().unwrap().size()),
+        "PSet" => Box::from(coll.as_any().downcast_ref::<PSet>().unwrap().size()),
+        "PVector" => Box::from(coll.as_any().downcast_ref::<PVector>().unwrap().len()),
+        "String" => Box::from(coll.as_any().downcast_ref::<String>().unwrap().len()),
         _ => {
             panic!("Could not downcast Value into provided Value trait implementing struct types!")
         }
