@@ -59,8 +59,8 @@
 (defn union
   [s1 s2]
   (if (< (count s1) (count s2))
-    (reduce conj s2 s1)
-    (reduce conj s1 s2)))
+    (reduce conj s2 (seq s1))
+    (reduce conj s1 (seq s2))))
 
 (defn difference
   "Return a set that is the first set without elements of the remaining sets"
@@ -70,8 +70,8 @@
               (if (contains? s2 item)
                 (disj result item)
                 result))
-            s1 s1)
-    (reduce disj s1 s2)))
+            s1 (seq s1))
+    (reduce disj s1 (seq s2))))
 
 (defn intersection
   "Return a set that is the intersection of the input sets"
@@ -82,16 +82,18 @@
               (if (contains? s2 item)
                 result
                 (disj result item)))
-            s1 s1)))
+            s1 (seq s1))))
 
 ;; any input must be one of: atom set map sequence
 
 (defn- atom-diff
   "Internal helper for diff."
   [a b]
-  (if (= a b) [nil nil a] [a b nil]))
+  (if (= a b)
+    ^{:t {:vector [:any]} :cast :any} [nil nil a]
+    ^{:t {:vector [:any]} :cast :any} [a b nil]))
 
-(defn equality-partition [x]
+(defn equality-partition ^String [x]
   (cond (set? x) :set
         (map? x) :map
         (vector? x) :sequence
@@ -102,19 +104,27 @@
     (diff-associative a b ab-keys)))
 
 (defn set-diff [a b]
-  [(not-empty (difference a b))
-   (not-empty (difference b a))
-   (not-empty (intersection a b))])
+  ^{:t {:vector [:any]} :cast :any}
+  [(difference a b)
+   (difference b a)
+   (intersection a b)])
 
 (defn- vectorize
   "Convert an associative-by-numeric-index collection into
    an equivalent vector, with nil for any missing keys"
   [m]
-  (when (seq m)
+  (when (not-empty m)
     (reduce
       (fn [result [k v]] (assoc result k v))
-      (vec (repeat (reduce max (keys m)) nil))
-      m)))
+      ^{:cast :any}
+      (vec (repeat ^{:cast :long} (reduce (fn [a b]
+                             (let [a-int ^{:cast :long} a
+                                   b-int ^{:cast :long} b]
+                               ^{:cast :any} (max a-int b-int)))
+                           (first (seq (keys m)))
+                           (seq (keys m)))
+                   nil))
+      (seq m))))
 
 (defn sequence-diff [a b]
   (vec (map vectorize (diff-associative

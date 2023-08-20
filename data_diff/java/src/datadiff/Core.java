@@ -9,31 +9,31 @@ public class Core {
 public static final TYPE_MISSING diffAssociativeKey(final TYPE_MISSING a, final TYPE_MISSING b, final TYPE_MISSING k) {
 final Object va = a.get(k);
 final Object vb = b.get(k);
-final Object vec18709 = diff(va, vb);
+final Object vec18699 = diff(va, vb);
 Object tmp43 = null;
 if ((0L <= 0L))
 {
-if ((0L < vec__18709.length()))
+if ((0L < vec__18699.length()))
 {
-tmp43 = vec__18709.get();
+tmp43 = vec__18699.get();
 }
 }
 final Object aa = tmp43;
 Object tmp44 = null;
 if ((0L <= 1L))
 {
-if ((1L < vec__18709.length()))
+if ((1L < vec__18699.length()))
 {
-tmp44 = vec__18709.get();
+tmp44 = vec__18699.get();
 }
 }
 final Object bb = tmp44;
 Object tmp45 = null;
 if ((0L <= 2L))
 {
-if ((2L < vec__18709.length()))
+if ((2L < vec__18699.length()))
 {
-tmp45 = vec__18709.get();
+tmp45 = vec__18699.get();
 }
 }
 final Object ab = tmp45;
@@ -174,18 +174,18 @@ public static final TYPE_MISSING union(final TYPE_MISSING s1, final TYPE_MISSING
 boolean tmp23 = (s1.length() < s2.length());
 if (tmp23)
 {
-return kalai.Kalai.foldLeft(s1, s2, conj);
+return kalai.Kalai.foldLeft(s1.stream(), s2, conj);
 }
 else
 {
-return kalai.Kalai.foldLeft(s2, s1, conj);
+return kalai.Kalai.foldLeft(s2.stream(), s1, conj);
 }
 }
 public static final TYPE_MISSING difference(final TYPE_MISSING s1, final TYPE_MISSING s2) {
 boolean tmp24 = (s1.length() < s2.length());
 if (tmp24)
 {
-return kalai.Kalai.foldLeft(s1, s1, (result, item) -> {
+return kalai.Kalai.foldLeft(s1.stream(), s1, (result, item) -> {
 boolean tmp25 = s2.containsKey(item);
 if (tmp25)
 {
@@ -199,7 +199,7 @@ return result;
 }
 else
 {
-return kalai.Kalai.foldLeft(s2, s1, disj);
+return kalai.Kalai.foldLeft(s2.stream(), s1, disj);
 }
 }
 public static final TYPE_MISSING intersection(final TYPE_MISSING s1, final TYPE_MISSING s2) {
@@ -210,7 +210,7 @@ return intersection(s2, s1);
 }
 else
 {
-return kalai.Kalai.foldLeft(s1, s1, (result, item) -> {
+return kalai.Kalai.foldLeft(s1.stream(), s1, (result, item) -> {
 boolean tmp27 = s2.containsKey(item);
 if (tmp27)
 {
@@ -227,14 +227,14 @@ public static final TYPE_MISSING atomDiff(final TYPE_MISSING a, final TYPE_MISSI
 boolean tmp28 = (a == b);
 if (tmp28)
 {
-return new TYPE_MISSING().addLast(null).addLast(null).addLast(a);
+return (Object)new io.lacuna.bifurcan.List<Object>().addLast(null).addLast(null).addLast(a);
 }
 else
 {
-return new TYPE_MISSING().addLast(a).addLast(b).addLast(null);
+return (Object)new io.lacuna.bifurcan.List<Object>().addLast(a).addLast(b).addLast(null);
 }
 }
-public static final TYPE_MISSING equalityPartition(final TYPE_MISSING x) {
+public static final String equalityPartition(final TYPE_MISSING x) {
 boolean tmp29 = (x instanceof Set);
 if (tmp29)
 {
@@ -266,33 +266,35 @@ final Object abKeys = union(keys(a), keys(b));
 return diffAssociative(a, b, abKeys);
 }
 public static final TYPE_MISSING setDiff(final TYPE_MISSING a, final TYPE_MISSING b) {
-return new TYPE_MISSING().addLast(notEmpty(difference(a, b))).addLast(notEmpty(difference(b, a))).addLast(notEmpty(intersection(a, b)));
+return (Object)new io.lacuna.bifurcan.List<Object>().addLast(difference(a, b)).addLast(difference(b, a)).addLast(intersection(a, b));
 }
 public static final TYPE_MISSING vectorize(final TYPE_MISSING m) {
-boolean tmp32 = m.stream();
+boolean tmp32 = notEmpty(m);
 if (tmp32)
 {
 Object tmp46 = null;
 if ((0L <= 0L))
 {
-if ((0L < vec__18754.length()))
+if ((0L < vec__18744.length()))
 {
-tmp46 = vec__18754.get();
+tmp46 = vec__18744.get();
 }
 }
 Object tmp47 = null;
 if ((0L <= 1L))
 {
-if ((1L < vec__18754.length()))
+if ((1L < vec__18744.length()))
 {
-tmp47 = vec__18754.get();
+tmp47 = vec__18744.get();
 }
 }
 {
-return kalai.Kalai.foldLeft(m, vec(repeat(keys(m).stream().reduce((a, b) -> {
-return max(a, b);
-}).get(), null)), (result, p__18752) -> {
-final TYPE_MISSING vec18754 = p__18752;
+return kalai.Kalai.foldLeft(m.stream(), (Object)vec(repeat((long)kalai.Kalai.foldLeft(keys(m).stream(), keys(m).stream().findFirst().get(), (a, b) -> {
+final long aInt = (long)a;
+final long bInt = (long)b;
+return (Object)clojure.lang.Numbers.max(aInt, bInt);
+}), null)), (result, p__18742) -> {
+final TYPE_MISSING vec18744 = p__18742;
 final Object k = tmp46;
 final Object v = tmp47;
 return result.put(k, v);

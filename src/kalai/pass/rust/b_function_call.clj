@@ -165,9 +165,6 @@
       (r/invoke (u/var ~#'dissoc) & ?more)
       (r/method remove & ?more)
 
-      (r/invoke (u/var ~#'disj) & ?more)
-      (r/method remove & ?more)
-
       ;; conj - immutable collections - they are not caught by these rules, and instead
       ;; fall through and are caught by the default r/invoke rule, which emits
       ;; a stringified `conj(...)`, which is handled in our kalai.rs helper fns/impl methods

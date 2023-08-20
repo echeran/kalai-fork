@@ -3,9 +3,9 @@ use crate::kalai::kalai::*;
 pub fn diff_associative_key(a: kalai::BValue, b: kalai::BValue, k: kalai::BValue) -> kalai::BValue {
     let va: kalai::BValue = kalai::get(a, k);
     let vb: kalai::BValue = kalai::get(b, k);
-    let vec_18709: kalai::BValue = diff(va, vb);
+    let vec_18699: kalai::BValue = diff(va, vb);
     let aa: kalai::BValue = {
-        let get1 = get(vec_18709, kalai::BValue::from(0i64));
+        let get1 = get(vec_18699, kalai::BValue::from(0i64));
         if get1.is_some() {
             get1
         } else {
@@ -13,7 +13,7 @@ pub fn diff_associative_key(a: kalai::BValue, b: kalai::BValue, k: kalai::BValue
         }
     };
     let bb: kalai::BValue = {
-        let get2 = get(vec_18709, kalai::BValue::from(1i64));
+        let get2 = get(vec_18699, kalai::BValue::from(1i64));
         if get2.is_some() {
             get2
         } else {
@@ -21,7 +21,7 @@ pub fn diff_associative_key(a: kalai::BValue, b: kalai::BValue, k: kalai::BValue
         }
     };
     let ab: kalai::BValue = {
-        let get3 = get(vec_18709, kalai::BValue::from(2i64));
+        let get3 = get(vec_18699, kalai::BValue::from(2i64));
         if get3.is_some() {
             get3
         } else {
@@ -140,9 +140,9 @@ pub fn diff_associative(a: kalai::BValue, b: kalai::BValue, ks: kalai::BValue) -
 }
 pub fn union(s1: kalai::BValue, s2: kalai::BValue) -> kalai::BValue {
     if (kalai::count(s1) < kalai::count(s2)) {
-        return reduce(conj, s2, s1);
+        return reduce(conj, s2, seq(s1));
     } else {
-        return reduce(conj, s1, s2);
+        return reduce(conj, s1, seq(s2));
     }
 }
 pub fn difference(s1: kalai::BValue, s2: kalai::BValue) -> kalai::BValue {
@@ -150,16 +150,16 @@ pub fn difference(s1: kalai::BValue, s2: kalai::BValue) -> kalai::BValue {
         return reduce(
             |result, item| {
                 if contains(s2, item) {
-                    return result.remove(item);
+                    return disj(result, item);
                 } else {
                     return result;
                 }
             },
             s1,
-            s1,
+            seq(s1),
         );
     } else {
-        return reduce(disj, s1, s2);
+        return reduce(disj, s1, seq(s2));
     }
 }
 pub fn intersection(s1: kalai::BValue, s2: kalai::BValue) -> kalai::BValue {
@@ -171,28 +171,32 @@ pub fn intersection(s1: kalai::BValue, s2: kalai::BValue) -> kalai::BValue {
                 if contains(s2, item) {
                     return result;
                 } else {
-                    return result.remove(item);
+                    return disj(result, item);
                 }
             },
             s1,
-            s1,
+            seq(s1),
         );
     }
 }
 pub fn atom_diff(a: kalai::BValue, b: kalai::BValue) -> kalai::BValue {
     if (a == b) {
-        return kalai::BValue::new()
-            .push_back(kalai::BValue::from(kalai::NIL).clone())
-            .push_back(kalai::BValue::from(kalai::NIL).clone())
-            .push_back(a.clone());
+        return kalai::BValue::from(
+            rpds::Vector::new()
+                .push_back(kalai::BValue::from(kalai::NIL).clone())
+                .push_back(kalai::BValue::from(kalai::NIL).clone())
+                .push_back(a.clone()),
+        );
     } else {
-        return kalai::BValue::new()
-            .push_back(a.clone())
-            .push_back(b.clone())
-            .push_back(kalai::BValue::from(kalai::NIL).clone());
+        return kalai::BValue::from(
+            rpds::Vector::new()
+                .push_back(a.clone())
+                .push_back(b.clone())
+                .push_back(kalai::BValue::from(kalai::NIL).clone()),
+        );
     }
 }
-pub fn equality_partition(x: kalai::BValue) -> kalai::BValue {
+pub fn equality_partition(x: kalai::BValue) -> String {
     if x.is_type("Set") {
         return String::from(":set");
     } else {
@@ -212,18 +216,20 @@ pub fn map_diff(a: kalai::BValue, b: kalai::BValue) -> kalai::BValue {
     return diff_associative(a, b, ab_keys);
 }
 pub fn set_diff(a: kalai::BValue, b: kalai::BValue) -> kalai::BValue {
-    return kalai::BValue::new()
-        .push_back(not_empty(difference(a, b)).clone())
-        .push_back(not_empty(difference(b, a)).clone())
-        .push_back(not_empty(intersection(a, b)).clone());
+    return kalai::BValue::from(
+        rpds::Vector::new()
+            .push_back(difference(a, b).clone())
+            .push_back(difference(b, a).clone())
+            .push_back(intersection(a, b).clone()),
+    );
 }
 pub fn vectorize(m: kalai::BValue) -> kalai::BValue {
-    if seq(m) {
+    if not_empty(m) {
         return reduce(
-            |result, p_18752| {
-                let vec_18754 = p_18752;
+            |result, p_18742| {
+                let vec_18744 = p_18742;
                 let k: kalai::BValue = {
-                    let get4 = get(vec_18754, kalai::BValue::from(0i64));
+                    let get4 = get(vec_18744, kalai::BValue::from(0i64));
                     if get4.is_some() {
                         get4
                     } else {
@@ -231,7 +237,7 @@ pub fn vectorize(m: kalai::BValue) -> kalai::BValue {
                     }
                 };
                 let v: kalai::BValue = {
-                    let get5 = get(vec_18754, kalai::BValue::from(1i64));
+                    let get5 = get(vec_18744, kalai::BValue::from(1i64));
                     if get5.is_some() {
                         get5
                     } else {
@@ -240,11 +246,19 @@ pub fn vectorize(m: kalai::BValue) -> kalai::BValue {
                 };
                 return assoc(result, k, v);
             },
-            vec(repeat(
-                reduce(max, keys(m)),
+            kalai::BValue::from(vec(repeat(
+                (reduce(
+                    |a, b| {
+                        let a_int: i64 = (a as i64);
+                        let b_int: i64 = (b as i64);
+                        return kalai::BValue::from(max(a_int, b_int));
+                    },
+                    seq(keys(m)).next().unwrap().clone(),
+                    seq(keys(m)),
+                ) as i64),
                 kalai::BValue::from(kalai::NIL),
-            )),
-            m,
+            ))),
+            seq(m),
         );
     } else {
         return kalai::BValue::from(kalai::NIL);

@@ -1682,12 +1682,12 @@ pub fn assoc(coll: BValue, k: BValue, v: BValue) -> BValue {
     conj(coll, BValue::from(PVector::new().push(k).push(v)))
 }
 
-pub fn range<T>(n: i32) -> impl Iterator {
+pub fn range<T>(n: i64) -> impl Iterator {
     0..n
 }
 
-pub fn repeat(n: usize, x: BValue) -> impl Iterator<Item = BValue> {
-    std::iter::repeat(x).take(n)
+pub fn repeat(n: i64, x: BValue) -> impl Iterator<Item = BValue> {
+    std::iter::repeat(x).take(n as usize)
 }
 
 pub fn seq(coll: BValue) -> Box<dyn Iterator<Item = BValue>> {
@@ -1714,11 +1714,11 @@ pub fn count(coll: BValue) -> usize {
 }
 
 pub fn reduce(
-    f: fn(BValue, BValue) -> BValue,
+    f: impl Fn(BValue, BValue) -> BValue,
     init: BValue,
     xs: impl Iterator<Item = BValue>,
 ) -> BValue {
-    xs.fold(init, |a, b| f(a, b))
+    xs.fold(init, f)
 }
 
 /* TODO:
