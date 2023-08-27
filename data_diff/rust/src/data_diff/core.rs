@@ -3,9 +3,9 @@ use crate::kalai::kalai::*;
 pub fn diff_associative_key(a: kalai::BValue, b: kalai::BValue, k: kalai::BValue) -> kalai::BValue {
     let va: kalai::BValue = kalai::get(a, k);
     let vb: kalai::BValue = kalai::get(b, k);
-    let vec_18699: kalai::BValue = diff(va, vb);
+    let vec_18692: kalai::BValue = diff(va, vb);
     let aa: kalai::BValue = {
-        let get1 = get(vec_18699, kalai::BValue::from(0i64));
+        let get1 = get(vec_18692, kalai::BValue::from(0i64));
         if get1.is_some() {
             get1
         } else {
@@ -13,7 +13,7 @@ pub fn diff_associative_key(a: kalai::BValue, b: kalai::BValue, k: kalai::BValue
         }
     };
     let bb: kalai::BValue = {
-        let get2 = get(vec_18699, kalai::BValue::from(1i64));
+        let get2 = get(vec_18692, kalai::BValue::from(1i64));
         if get2.is_some() {
             get2
         } else {
@@ -21,7 +21,7 @@ pub fn diff_associative_key(a: kalai::BValue, b: kalai::BValue, k: kalai::BValue
         }
     };
     let ab: kalai::BValue = {
-        let get3 = get(vec_18699, kalai::BValue::from(2i64));
+        let get3 = get(vec_18692, kalai::BValue::from(2i64));
         if get3.is_some() {
             get3
         } else {
@@ -226,10 +226,10 @@ pub fn set_diff(a: kalai::BValue, b: kalai::BValue) -> kalai::BValue {
 pub fn vectorize(m: kalai::BValue) -> kalai::BValue {
     if not_empty(m) {
         return reduce(
-            |result, p_18742| {
-                let vec_18744 = p_18742;
+            |result, p_18735| {
+                let vec_18737 = p_18735;
                 let k: kalai::BValue = {
-                    let get4 = get(vec_18744, kalai::BValue::from(0i64));
+                    let get4 = get(vec_18737, kalai::BValue::from(0i64));
                     if get4.is_some() {
                         get4
                     } else {
@@ -237,7 +237,7 @@ pub fn vectorize(m: kalai::BValue) -> kalai::BValue {
                     }
                 };
                 let v: kalai::BValue = {
-                    let get5 = get(vec_18744, kalai::BValue::from(1i64));
+                    let get5 = get(vec_18737, kalai::BValue::from(1i64));
                     if get5.is_some() {
                         get5
                     } else {
@@ -247,15 +247,15 @@ pub fn vectorize(m: kalai::BValue) -> kalai::BValue {
                 return assoc(result, k, v);
             },
             kalai::BValue::from(vec(repeat(
-                (reduce(
+                i64::from(reduce(
                     |a, b| {
-                        let a_int: i64 = (a as i64);
-                        let b_int: i64 = (b as i64);
+                        let a_int: i64 = i64::from(a);
+                        let b_int: i64 = i64::from(b);
                         return kalai::BValue::from(max(a_int, b_int));
                     },
                     seq(keys(m)).next().unwrap().clone(),
                     seq(keys(m)),
-                ) as i64),
+                )),
                 kalai::BValue::from(kalai::NIL),
             ))),
             seq(m),
@@ -265,20 +265,20 @@ pub fn vectorize(m: kalai::BValue) -> kalai::BValue {
     }
 }
 pub fn sequence_diff(a: kalai::BValue, b: kalai::BValue) -> kalai::BValue {
-    return vec(diff_associative(
+    return kalai::BValue::from(vec(seq(diff_associative(
         if (a.is_type("Vector") || a.is_type("Vec")) {
             a
         } else {
-            vec(a)
+            kalai::BValue::from(vec(seq(a)))
         },
         if (b.is_type("Vector") || b.is_type("Vec")) {
             b
         } else {
-            vec(b)
+            kalai::BValue::from(vec(seq(b)))
         },
-        range(max(kalai::count(a), kalai::count(b))),
-    )
-    .map({ |a| vectorize(a) }));
+        kalai::BValue::from(vec(range(max(kalai::count(a), kalai::count(b))))),
+    ))
+    .map({ |a| vectorize(a) })));
 }
 pub fn diff_similar(a: kalai::BValue, b: kalai::BValue) -> kalai::BValue {
     let partition_a: kalai::BValue = equality_partition(a);

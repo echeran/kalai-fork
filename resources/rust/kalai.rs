@@ -1664,8 +1664,9 @@ pub fn assoc(coll: BValue, k: BValue, v: BValue) -> BValue {
     conj(coll, BValue::from(PVector::new().push(k).push(v)))
 }
 
-pub fn range<T>(n: i64) -> impl Iterator {
-    0..n
+pub fn range(n: i64) -> impl Iterator<Item = BValue> {
+    (0..n)
+        .map(|x| BValue::from(x))
 }
 
 pub fn repeat(n: i64, x: BValue) -> impl Iterator<Item = BValue> {
@@ -1683,16 +1684,17 @@ pub fn seq(coll: BValue) -> Box<dyn Iterator<Item = BValue>> {
     }
 }
 
-pub fn count(coll: BValue) -> usize {
-    match coll.type_name() {
-        "PMap" => Box::from(coll.as_any().downcast_ref::<PMap>().unwrap().size()),
-        "PSet" => Box::from(coll.as_any().downcast_ref::<PSet>().unwrap().size()),
-        "PVector" => Box::from(coll.as_any().downcast_ref::<PVector>().unwrap().len()),
-        "String" => Box::from(coll.as_any().downcast_ref::<String>().unwrap().len()),
+pub fn count(coll: BValue) -> i64 {
+    (match coll.type_name() {
+        "PMap" => coll.as_any().downcast_ref::<PMap>().unwrap().0.size(),
+        "PSet" => coll.as_any().downcast_ref::<PSet>().unwrap().0.size(),
+        "PVector" => coll.as_any().downcast_ref::<PVector>().unwrap().0.len(),
+        "String" => coll.as_any().downcast_ref::<String>().unwrap().0.len(),
         _ => {
             panic!("Could not downcast Value into provided Value trait implementing struct types!")
         }
-    }
+    })
+    as i64
 }
 
 

@@ -9,31 +9,31 @@ public class Core {
 public static final TYPE_MISSING diffAssociativeKey(final TYPE_MISSING a, final TYPE_MISSING b, final TYPE_MISSING k) {
 final Object va = a.get(k);
 final Object vb = b.get(k);
-final Object vec18699 = diff(va, vb);
+final Object vec18692 = diff(va, vb);
 Object tmp43 = null;
 if ((0L <= 0L))
 {
-if ((0L < vec__18699.length()))
+if ((0L < vec__18692.length()))
 {
-tmp43 = vec__18699.get();
+tmp43 = vec__18692.get();
 }
 }
 final Object aa = tmp43;
 Object tmp44 = null;
 if ((0L <= 1L))
 {
-if ((1L < vec__18699.length()))
+if ((1L < vec__18692.length()))
 {
-tmp44 = vec__18699.get();
+tmp44 = vec__18692.get();
 }
 }
 final Object bb = tmp44;
 Object tmp45 = null;
 if ((0L <= 2L))
 {
-if ((2L < vec__18699.length()))
+if ((2L < vec__18692.length()))
 {
-tmp45 = vec__18699.get();
+tmp45 = vec__18692.get();
 }
 }
 final Object ab = tmp45;
@@ -275,17 +275,17 @@ if (tmp32)
 Object tmp46 = null;
 if ((0L <= 0L))
 {
-if ((0L < vec__18744.length()))
+if ((0L < vec__18737.length()))
 {
-tmp46 = vec__18744.get();
+tmp46 = vec__18737.get();
 }
 }
 Object tmp47 = null;
 if ((0L <= 1L))
 {
-if ((1L < vec__18744.length()))
+if ((1L < vec__18737.length()))
 {
-tmp47 = vec__18744.get();
+tmp47 = vec__18737.get();
 }
 }
 {
@@ -293,8 +293,8 @@ return kalai.Kalai.foldLeft(m.stream(), (Object)vec(repeat((long)kalai.Kalai.fol
 final long aInt = (long)a;
 final long bInt = (long)b;
 return (Object)clojure.lang.Numbers.max(aInt, bInt);
-}), null)), (result, p__18742) -> {
-final TYPE_MISSING vec18744 = p__18742;
+}), null)), (result, p__18735) -> {
+final TYPE_MISSING vec18737 = p__18735;
 final Object k = tmp46;
 final Object v = tmp47;
 return result.put(k, v);
@@ -315,7 +315,7 @@ tmp33 = a;
 }
 else
 {
-tmp33 = vec(a);
+tmp33 = (Object)vec(a.stream());
 }
 "MISSING_TYPE" tmp35;
 boolean tmp36 = (b instanceof List);
@@ -325,9 +325,9 @@ tmp35 = b;
 }
 else
 {
-tmp35 = vec(b);
+tmp35 = (Object)vec(b.stream());
 }
-return vec(diffAssociative(tmp33, tmp35, range(clojure.lang.Numbers.max(a.length(), b.length()))).stream().map((a) -> {
+return (Object)vec(diffAssociative(tmp33, tmp35, (Object)vec(range(clojure.lang.Numbers.max(a.length(), b.length())))).stream().map((a) -> {
 return vectorize(a);
 }));
 }

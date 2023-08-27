@@ -127,10 +127,11 @@
       (seq m))))
 
 (defn sequence-diff [a b]
-  (vec (map vectorize (diff-associative
-                        (if (vector? a) a (vec a))
-                        (if (vector? b) b (vec b))
-                        (range (max (count a) (count b)))))))
+  ^{:cast :any}
+  (vec (map vectorize (seq (diff-associative
+                             (if (vector? a) a ^{:cast :any} (vec (seq a)))
+                             (if (vector? b) b ^{:cast :any} (vec (seq b)))
+                             ^{:cast :any} (vec (range (max (count a) (count b)))))))))
 
 (defn diff-similar [a b]
   (let [partition-a (equality-partition a)
