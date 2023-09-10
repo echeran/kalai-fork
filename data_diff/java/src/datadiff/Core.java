@@ -9,31 +9,31 @@ public class Core {
 public static final TYPE_MISSING diffAssociativeKey(final TYPE_MISSING a, final TYPE_MISSING b, final TYPE_MISSING k) {
 final Object va = a.get(k);
 final Object vb = b.get(k);
-final Object vec18692 = diff(va, vb);
+final Object vec18742 = diff(va, vb);
 Object tmp43 = null;
 if ((0L <= 0L))
 {
-if ((0L < vec__18692.length()))
+if ((0L < vec__18742.length()))
 {
-tmp43 = vec__18692.get();
+tmp43 = vec__18742.get();
 }
 }
 final Object aa = tmp43;
 Object tmp44 = null;
 if ((0L <= 1L))
 {
-if ((1L < vec__18692.length()))
+if ((1L < vec__18742.length()))
 {
-tmp44 = vec__18692.get();
+tmp44 = vec__18742.get();
 }
 }
 final Object bb = tmp44;
 Object tmp45 = null;
 if ((0L <= 2L))
 {
-if ((2L < vec__18692.length()))
+if ((2L < vec__18742.length()))
 {
-tmp45 = vec__18692.get();
+tmp45 = vec__18742.get();
 }
 }
 final Object ab = tmp45;
@@ -161,14 +161,15 @@ return (Object)new io.lacuna.bifurcan.List<Object>().addLast(tmp13).addLast(tmp1
 public static final TYPE_MISSING merge2(final TYPE_MISSING m1, final TYPE_MISSING m2) {
 return kalai.Kalai.foldLeft(m2.stream(), m1, conj);
 }
-public static final TYPE_MISSING diffAssociative(final TYPE_MISSING a, final TYPE_MISSING b, final TYPE_MISSING ks) {
-return kalai.Kalai.foldLeft(ks.stream().map((k) -> {
-return diffAssociativeKey(a, b, k);
-}), (Object)new io.lacuna.bifurcan.List<Object>().addLast(null).addLast(null).addLast(null), (diff1, diff2) -> {
+public static final TYPE_MISSING mergeDiffs(final Object diff1, final Object diff2) {
 return (Object)vec(kalai.Kalai.map((a, b) -> {
 return merge2(a, b);
 }, diff1.stream(), diff2.stream()));
-});
+}
+public static final TYPE_MISSING diffAssociative(final TYPE_MISSING a, final TYPE_MISSING b, final TYPE_MISSING ks) {
+return kalai.Kalai.foldLeft(ks.stream().map((k) -> {
+return diffAssociativeKey(a, b, k);
+}), (Object)new io.lacuna.bifurcan.List<Object>().addLast(null).addLast(null).addLast(null), mergeDiffs);
 }
 public static final TYPE_MISSING union(final TYPE_MISSING s1, final TYPE_MISSING s2) {
 boolean tmp23 = (s1.length() < s2.length());
@@ -275,17 +276,17 @@ if (tmp32)
 Object tmp46 = null;
 if ((0L <= 0L))
 {
-if ((0L < vec__18737.length()))
+if ((0L < vec__18786.length()))
 {
-tmp46 = vec__18737.get();
+tmp46 = vec__18786.get();
 }
 }
 Object tmp47 = null;
 if ((0L <= 1L))
 {
-if ((1L < vec__18737.length()))
+if ((1L < vec__18786.length()))
 {
-tmp47 = vec__18737.get();
+tmp47 = vec__18786.get();
 }
 }
 {
@@ -293,8 +294,8 @@ return kalai.Kalai.foldLeft(m.stream(), (Object)vec(repeat((long)kalai.Kalai.fol
 final long aInt = (long)a;
 final long bInt = (long)b;
 return (Object)clojure.lang.Numbers.max(aInt, bInt);
-}), null)), (result, p__18735) -> {
-final TYPE_MISSING vec18737 = p__18735;
+}), null)), (result, p__18784) -> {
+final TYPE_MISSING vec18786 = p__18784;
 final Object k = tmp46;
 final Object v = tmp47;
 return result.put(k, v);
@@ -332,10 +333,10 @@ return vectorize(a);
 }));
 }
 public static final TYPE_MISSING diffSimilar(final TYPE_MISSING a, final TYPE_MISSING b) {
-final Object partitionA = equalityPartition(a);
-final Object partitionB = equalityPartition(b);
+final String partitionA = equalityPartition(a);
+final String partitionB = equalityPartition(b);
 {
-boolean tmp37 = (partitionA == partitionB);
+boolean tmp37 = partitionA.equals(partitionB);
 if (tmp37)
 {
 boolean tmp38 = (partitionA == ":set");
@@ -382,7 +383,7 @@ public static final TYPE_MISSING diff(final Object a, final Object b) {
 boolean tmp42 = (a == b);
 if (tmp42)
 {
-return new TYPE_MISSING().addLast(null).addLast(null).addLast(a);
+return (Object)new io.lacuna.bifurcan.List<Object>().addLast(null).addLast(null).addLast(a);
 }
 else
 {

@@ -28,10 +28,13 @@
   (parens (comma-separated params)))
 
 (defn- stringify-arg [arg]
-  (let [{:keys [mut ref]} (meta arg)]
+  ;;(u/spy arg)
+  (let [{:keys [mut ref]} (meta arg)
+        is-seq (-> arg meta :seq)]
     (str (when ref "&")
          (when mut "mut ")
-         (stringify arg))))
+         (stringify arg)
+         (when-not (or ref is-seq) ".clone()"))))
 
 (defn- args-list [args]
   (parens (comma-separated (map stringify-arg args))))

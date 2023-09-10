@@ -107,7 +107,7 @@ pub trait Value: Debug + CloneValue {
         type_str == self.type_name()
     }
     fn is_some(&self) -> bool {
-        self != NIL
+        !self.is_type("Nil")
     }
 }
 
@@ -1406,7 +1406,7 @@ impl PMap {
     }
 
     pub fn dissoc(&self, k: BValue) -> PMap {
-        PMap(self.0.remove(k))
+        PMap(self.0.remove(&k))
     }
 }
 
@@ -1444,7 +1444,7 @@ impl PSet {
     }
 
     pub fn disj(&self, v: BValue) -> PSet {
-        PSet(self.0.remove(v))
+        PSet(self.0.remove(&v))
     }
 }
 
@@ -1589,19 +1589,15 @@ pub fn dissoc(coll: BValue, x: BValue) -> BValue {
 }
 
 pub fn get(coll: BValue, x: BValue) -> BValue {
-    let result = match coll.type_name() {
-        "PMap" => BValue::from(coll.as_any().downcast_ref::<PMap>().unwrap().get(x)),
-        "PSet" => BValue::from(coll.as_any().downcast_ref::<PSet>().unwrap().get(x)),
+    match coll.type_name() {
+        "PMap" => coll.as_any().downcast_ref::<PMap>().unwrap().get(&x),
+        "PSet" => coll.as_any().downcast_ref::<PSet>().unwrap().get(&x),
         "PVector" => {
-            let idx = x.as_any().downcast_ref::<usize>().unwrap();
-            BValue::from(coll.as_any().downcast_ref::<PVector>().unwrap().get(idx))
+            let idx = x.as_any().downcast_ref::<i64>().unwrap();
+            coll.as_any().downcast_ref::<PVector>().unwrap().get(*idx as usize)
         },
         _ => panic!("Could not downcast Value into provided Value trait implementing struct types!"),
-    };
-    match result {
-        Some(x) => x.clone(),
-        None => NIL,
-    }
+    }.unwrap_or(&BValue::from(NIL)).clone()
 }
 
 /// We return a BValue of a PSet (unlike Clojure)
@@ -1622,11 +1618,11 @@ pub fn keys(m: BValue) -> BValue {
 pub fn contains(coll: BValue, k: BValue) -> bool {
     match coll.type_name() {
         "PMap" =>
-            coll.as_any().downcast_ref::<PMap>().unwrap().0.contains_key(k),
-        "PSet" => coll.as_any().downcast_ref::<PSet>().unwrap().0.contains(k),
+            coll.as_any().downcast_ref::<PMap>().unwrap().0.contains_key(&k),
+        "PSet" => coll.as_any().downcast_ref::<PSet>().unwrap().0.contains(&k),
         "PVector" => {
             let count: usize = coll.as_any().downcast_ref::<PVector>().unwrap().0.len();
-            let idx: usize = k.as_any().downcast_ref::<i64>().unwrap() as usize;
+            let idx: usize = *(k.as_any().downcast_ref::<i64>().unwrap()) as usize;
             idx < count  // usize implies non-negative
         },
         _ => panic!("Could not get keys() from BValue of type {}!", coll.type_name()),
@@ -1689,7 +1685,7 @@ pub fn count(coll: BValue) -> i64 {
         "PMap" => coll.as_any().downcast_ref::<PMap>().unwrap().0.size(),
         "PSet" => coll.as_any().downcast_ref::<PSet>().unwrap().0.size(),
         "PVector" => coll.as_any().downcast_ref::<PVector>().unwrap().0.len(),
-        "String" => coll.as_any().downcast_ref::<String>().unwrap().0.len(),
+        "String" => (*(coll.as_any().downcast_ref::<String>().unwrap())).len(),
         _ => {
             panic!("Could not downcast Value into provided Value trait implementing struct types!")
         }

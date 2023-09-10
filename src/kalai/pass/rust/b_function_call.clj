@@ -61,6 +61,11 @@
                                       (m/app meta {:t {(m/pred #{:mmap :mvector :mset}) [?value-t]}})))
       (r/method into_iter (r/method clone ?coll))
 
+      ;; For all non-mutable collections, annotate the form as :seq true
+      (r/invoke (u/var ~#'seq) ?coll)
+      (m/app #(with-meta % {:seq true})
+             (r/invoke seq ?coll))
+
       (r/invoke (u/var ~#'first) ?seq)
       (r/method clone (r/method unwrap (r/method next ?seq)))
 
@@ -225,16 +230,18 @@
       ?xs
 
       (r/invoke (u/var ~#'map) ?fn ?xs)
-      (r/method map
-                ?xs
-                ~(maybe-lambda ?fn 1))
+      (m/app #(with-meta % {:seq true})
+             (r/method map
+                       ?xs
+                       ~(maybe-lambda ?fn 1)))
 
       (r/invoke (u/var ~#'map) ?fn ?xs ?ys)
-      (r/method map
-                (r/invoke "std::iter::zip" ?xs ?ys)
-                (r/lambda [t] (r/invoke ~(maybe-lambda ?fn 2)
-                                        (r/field 0 t)
-                                        (r/field 1 t))))
+      (m/app #(with-meta % {:seq true})
+             (r/method map
+                       (r/invoke "std::iter::zip" ?xs ?ys)
+                       (r/lambda [t] (r/invoke ~(maybe-lambda ?fn 2)
+                                               (r/field 0 t)
+                                               (r/field 1 t)))))
 
       ;; reduce - immutable collections - they are not caught by these rules, and instead
       ;; fall through and are caught by the default r/invoke rule, which emits
@@ -254,6 +261,14 @@
                 (r/method into_iter (r/method clone ?xs))
                 ?initial
                 ~(maybe-lambda ?fn 2))
+
+      (r/invoke (u/var ~#'repeat) ?coll . !args ...)
+      (m/app #(with-meta % {:seq true})
+             (r/invoke repeat ?coll . !args ...))
+
+      (r/invoke (u/var ~#'range) ?coll . !args ...)
+      (m/app #(with-meta % {:seq true})
+             (r/invoke range ?coll . !args ...))
 
       ;; TODO: do we really need to clone here???
       (r/invoke (u/var ~#'vector?) ?x)

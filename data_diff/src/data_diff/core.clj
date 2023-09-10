@@ -34,13 +34,15 @@
   [m1 m2]
   (reduce conj m1 (seq m2)))
 
+(defn merge-diffs [^{:t :any} diff1 ^{:t :any} diff2]
+  ;; TODO: move the explict seq calls into function_call
+  ^{:cast :any} (vec (map merge2 (seq diff1) (seq diff2))))
+
 (defn diff-associative
   "Diff associative things a and b, comparing only keys in ks."
   [a b ks]
   (reduce
-    (fn [diff1 diff2]
-      ;; TODO: move the explict seq calls into function_call
-      ^{:cast :any} (vec (map merge2 (seq diff1) (seq diff2))))
+    merge-diffs
     ^{:t {:vector [:any]} :cast :any} [nil nil nil]
     (map (fn [k]
            (diff-associative-key a b k))
@@ -134,8 +136,8 @@
                              ^{:cast :any} (vec (range (max (count a) (count b)))))))))
 
 (defn diff-similar [a b]
-  (let [partition-a (equality-partition a)
-        partition-b (equality-partition b)]
+  (let [^String partition-a (equality-partition a)
+        ^String partition-b (equality-partition b)]
     (if (= partition-a partition-b)
       (cond
         (= partition-a :set) (set-diff a b)
@@ -159,5 +161,6 @@
   {:added "1.3"}
   [^{:t :any} a, ^{:t :any} b]
   (if (= a b)
+    ^{:t {:vector [:any]} :cast :any}
     [nil nil a]
     (diff-similar a b)))
