@@ -9,31 +9,31 @@ public class Core {
 public static final TYPE_MISSING diffAssociativeKey(final TYPE_MISSING a, final TYPE_MISSING b, final TYPE_MISSING k) {
 final Object va = a.get(k);
 final Object vb = b.get(k);
-final Object vec18742 = diff(va, vb);
+final Object vec18735 = diff(va, vb);
 Object tmp43 = null;
 if ((0L <= 0L))
 {
-if ((0L < vec__18742.length()))
+if ((0L < vec__18735.length()))
 {
-tmp43 = vec__18742.get();
+tmp43 = vec__18735.get();
 }
 }
 final Object aa = tmp43;
 Object tmp44 = null;
 if ((0L <= 1L))
 {
-if ((1L < vec__18742.length()))
+if ((1L < vec__18735.length()))
 {
-tmp44 = vec__18742.get();
+tmp44 = vec__18735.get();
 }
 }
 final Object bb = tmp44;
 Object tmp45 = null;
 if ((0L <= 2L))
 {
-if ((2L < vec__18742.length()))
+if ((2L < vec__18735.length()))
 {
-tmp45 = vec__18742.get();
+tmp45 = vec__18735.get();
 }
 }
 final Object ab = tmp45;
@@ -276,17 +276,17 @@ if (tmp32)
 Object tmp46 = null;
 if ((0L <= 0L))
 {
-if ((0L < vec__18786.length()))
+if ((0L < vec__18779.length()))
 {
-tmp46 = vec__18786.get();
+tmp46 = vec__18779.get();
 }
 }
 Object tmp47 = null;
 if ((0L <= 1L))
 {
-if ((1L < vec__18786.length()))
+if ((1L < vec__18779.length()))
 {
-tmp47 = vec__18786.get();
+tmp47 = vec__18779.get();
 }
 }
 {
@@ -294,8 +294,8 @@ return kalai.Kalai.foldLeft(m.stream(), (Object)vec(repeat((long)kalai.Kalai.fol
 final long aInt = (long)a;
 final long bInt = (long)b;
 return (Object)clojure.lang.Numbers.max(aInt, bInt);
-}), null)), (result, p__18784) -> {
-final TYPE_MISSING vec18786 = p__18784;
+}), null)), (result, p__18777) -> {
+final TYPE_MISSING vec18779 = p__18777;
 final Object k = tmp46;
 final Object v = tmp47;
 return result.put(k, v);

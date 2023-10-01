@@ -77,6 +77,11 @@ pub struct PVector(pub rpds::Vector<BValue>);
 #[derive(Debug, Clone)]
 pub struct PEntry(pub rpds::Vector<BValue>);
 
+// Have to use a concrete collection instead of Rust Iterator because Iterator
+// is a trait, and therefore can't be used to define a struct.
+#[derive(Debug, Clone)]
+pub struct PSeq(pub rpds::Vector<BValue>);
+
 // implementing Value trait based on SO answer at:
 // https://stackoverflow.com/a/49779676
 
@@ -403,6 +408,39 @@ impl Value for PEntry {
     fn eq_test(&self, other: &dyn Value) -> bool {
         match other.as_any().downcast_ref::<PEntry>() {
             Some(entry) => &self.0 == &entry.0,
+            None => false,
+        }
+    }
+}
+
+// wrapper type for seq / Iterator
+impl Value for PSeq {
+    fn type_name(&self) -> &'static str {
+        "PSeq"
+    }
+
+    fn hash_id(&self) -> u64 {
+        // TODO: find a more efficient way to create a deterministic contents/value-based hash for a Set (or any collection)
+        // TODO: look into how Clojure hashes collections (ex: map, set)
+        // Note: we use BinaryHeap to order the hash values because hashing is stateful, and therefore, order-dependent.
+        let elem_hashes: BinaryHeap<u64> = self.0.iter().map(|e| e.deref().hash_id()).collect();
+        let sorted_hashes: Vec<u64> = elem_hashes.into_sorted_vec();
+
+        let mut hasher = DefaultHasher::new();
+        for eh in sorted_hashes.iter() {
+            eh.hash(&mut hasher);
+        }
+        let result = hasher.finish();
+        result
+    }
+
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
+
+    fn eq_test(&self, other: &dyn Value) -> bool {
+        match other.as_any().downcast_ref::<PSeq>() {
+            Some(seq) => &self.0 == &seq.0,
             None => false,
         }
     }
@@ -1240,6 +1278,34 @@ impl From<PEntry> for BValue {
     }
 }
 
+// Iterator<Item=BValue> <-> PSeq - downcasting / upcasting
+
+impl From<BValue> for PSeq {
+    fn from(v: BValue) -> PSeq {
+        if let Some(seq) = v.as_any().downcast_ref::<PSeq>() {
+            seq.clone()
+        } else {
+            panic!("Could not downcast Value into PSeq!");
+        }
+    }
+}
+
+impl From<&BValue> for PSeq {
+    fn from(v: &BValue) -> PSeq {
+        if let Some(pvec) = v.as_any().downcast_ref::<PSeq>() {
+            pvec.clone()
+        } else {
+            panic!("Could not downcast Value into PSeq!");
+        }
+    }
+}
+
+impl From<PSeq> for BValue {
+    fn from(v: PSeq) -> BValue {
+        Box::new(v)
+    }
+}
+
 //
 // Float impls
 //
@@ -1390,14 +1456,19 @@ impl PMap {
         self.0.size()
     }
 
-    pub fn seq(&self) -> impl Iterator<Item = BValue> + '_ {
-        self.0.iter().map(|entry| {
-            BValue::from(PEntry(
-                rpds::Vector::new()
-                    .push_back(entry.0.clone())
-                    .push_back(entry.1.clone()),
-            ))
-        })
+    pub fn seq(&self) -> BValue {
+        let v: rpds::Vector<BValue> = self
+            .0
+            .iter()
+            .map(|entry| {
+                BValue::from(PEntry(
+                    rpds::Vector::new()
+                        .push_back(entry.0.clone())
+                        .push_back(entry.1.clone()),
+                ))
+            })
+            .collect();
+        BValue::from(PSeq(v))
     }
 
     pub fn dissoc(&self, k: BValue) -> PMap {
@@ -1671,8 +1742,9 @@ pub fn not_empty(coll: BValue) -> bool {
     !is_empty(coll)
 }
 
-pub fn vec(i: impl Iterator<Item = BValue>) -> PVector {
-    PVector(rpds::Vector::from_iter(i))
+pub fn vec(i: BValue) -> PVector {
+    let seq = pseq(i);
+    PVector(seq.0)
 }
 
 pub fn max<T: Ord>(a: T, b: T) -> T {
@@ -1683,23 +1755,37 @@ pub fn assoc(coll: BValue, k: BValue, v: BValue) -> BValue {
     conj(coll, BValue::from(PVector::new().push(k).push(v)))
 }
 
-pub fn range(n: i64) -> impl Iterator<Item = BValue> {
-    (0..n).map(|x| BValue::from(x))
+pub fn range(n: i64) -> BValue {
+    let v: rpds::Vector<BValue> = (0..n).map(|x| BValue::from(x)).collect();
+    BValue::from(PSeq(v))
 }
 
-pub fn repeat(n: i64, x: BValue) -> impl Iterator<Item = BValue> {
-    std::iter::repeat(x).take(n as usize)
+pub fn repeat(n: i64, x: BValue) -> BValue {
+    let v: rpds::Vector<BValue> = std::iter::repeat(x).take(n as usize).collect();
+    BValue::from(PSeq(v))
 }
 
-pub fn seq(coll: BValue) -> Box<dyn Iterator<Item = BValue>> {
+pub fn seq(coll: BValue) -> BValue {
     match coll.type_name() {
         "PMap" => Box::from(coll.as_any().downcast_ref::<PMap>().unwrap().seq()),
-        "PSet" => Box::from(coll.as_any().downcast_ref::<PSet>().unwrap().seq()),
-        "PVector" => Box::from(coll.as_any().downcast_ref::<PVector>().unwrap().seq()),
+        // "PSet" => Box::from(coll.as_any().downcast_ref::<PSet>().unwrap().seq()),
+        // "PVector" => Box::from(coll.as_any().downcast_ref::<PVector>().unwrap().seq()),
         _ => {
             panic!("Could not downcast Value into provided Value trait implementing struct types!")
         }
     }
+}
+
+pub fn map(f: impl Fn(BValue) -> BValue, xs: BValue) -> BValue {
+    let v: rpds::Vector<BValue> = pseq(xs).0.iter().cloned().map(f).collect();
+    BValue::from(v)
+}
+
+pub fn map2(f: impl Fn(BValue, BValue) -> BValue, seq1: BValue, seq2: BValue) -> BValue {
+    let v: rpds::Vector<BValue> = std::iter::zip(pseq(seq1).0.iter(), pseq(seq2).0.iter())
+        .map(|x| f(x.0.clone(), x.1.clone()))
+        .collect();
+    BValue::from(v)
 }
 
 pub fn count(coll: BValue) -> i64 {
@@ -1714,12 +1800,21 @@ pub fn count(coll: BValue) -> i64 {
     }) as i64
 }
 
-pub fn reduce(
-    f: impl Fn(BValue, BValue) -> BValue,
-    init: BValue,
-    xs: impl Iterator<Item = BValue>,
-) -> BValue {
-    xs.fold(init, f)
+pub fn reduce(f: impl Fn(BValue, BValue) -> BValue, init: BValue, xs: BValue) -> BValue {
+    pseq(xs).0.iter().cloned().fold(init, f)
+}
+
+pub fn first(seq1: BValue) -> BValue {
+    pseq(seq1).0.iter().next().unwrap().clone()
+}
+
+pub fn pseq(xs: BValue) -> PSeq {
+    match xs.type_name() {
+        "PSeq" => xs.as_any().downcast_ref::<PSeq>().unwrap().clone(),
+        _ => {
+            panic!("Could not downcast Value into provided Value trait implementing struct types!")
+        }
+    }
 }
 
 /* TODO:

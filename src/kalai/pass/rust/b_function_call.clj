@@ -34,15 +34,14 @@
   [?fn arg-count]
   (if (fn-var? ?fn)
     (let [args (mapv symbol (map str (take arg-count "abcdefghikjlmnopqrstuvwxyz")))]
-      (list 'r/block
-            (list 'r/lambda
-                  args
-                  (list 'r/block
-                        (rewrite (list* (if (u/operator-symbols ?fn)
-                                          'r/operator
-                                          'r/invoke)
-                                        ?fn
-                                        args))))))
+      (list 'r/lambda
+            args
+            (list 'r/block
+                  (rewrite (list* (if (u/operator-symbols ?fn)
+                                    'r/operator
+                                    'r/invoke)
+                                  ?fn
+                                  args)))))
     ?fn))
 
 (def rewrite
@@ -66,8 +65,8 @@
       (m/app #(with-meta % {:seq true})
              (r/invoke seq ?coll))
 
-      (r/invoke (u/var ~#'first) ?seq)
-      (r/method clone (r/method unwrap (r/method next ?seq)))
+      ;;(r/invoke (u/var ~#'first) ?seq)
+      ;;(r/method clone (r/method unwrap (r/method next ?seq)))
 
       (r/invoke (u/var ~#'next) ?seq)
       (r/method skip ?seq (r/literal 1))
@@ -231,17 +230,20 @@
 
       (r/invoke (u/var ~#'map) ?fn ?xs)
       (m/app #(with-meta % {:seq true})
-             (r/method map
-                       ?xs
-                       ~(maybe-lambda ?fn 1)))
+             (r/invoke "kalai::map"
+                       ~(maybe-lambda ?fn 1)
+                       ?xs))
 
       (r/invoke (u/var ~#'map) ?fn ?xs ?ys)
       (m/app #(with-meta % {:seq true})
-             (r/method map
-                       (r/invoke "std::iter::zip" ?xs ?ys)
-                       (r/lambda [t] (r/invoke ~(maybe-lambda ?fn 2)
-                                               (r/field 0 t)
-                                               (r/field 1 t)))))
+             (r/invoke "kalai::map2" ?fn ?xs ?ys)
+             ;;(r/method map
+             ;;          (r/invoke "std::iter::zip" ?xs ?ys)
+             ;;          (r/lambda [t] (r/invoke ?fn
+             ;;                          ;;~(maybe-lambda ?fn 2)
+             ;;                                  (r/field 0 t)
+             ;;                                  (r/field 1 t))))
+             )
 
       ;; reduce - immutable collections - they are not caught by these rules, and instead
       ;; fall through and are caught by the default r/invoke rule, which emits

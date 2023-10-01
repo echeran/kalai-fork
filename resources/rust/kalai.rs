@@ -77,6 +77,11 @@ pub struct PVector(pub rpds::Vector<BValue>);
 #[derive(Debug, Clone)]
 pub struct PEntry(pub rpds::Vector<BValue>);
 
+// Have to use a concrete collection instead of Rust Iterator because Iterator
+// is a trait, and therefore can't be used to define a struct.
+#[derive(Debug, Clone)]
+pub struct PSeq(pub rpds::Vector<BValue>);
+
 // implementing Value trait based on SO answer at:
 // https://stackoverflow.com/a/49779676
 
@@ -403,6 +408,39 @@ impl Value for PEntry {
     fn eq_test(&self, other: &dyn Value) -> bool {
         match other.as_any().downcast_ref::<PEntry>() {
             Some(entry) => &self.0 == &entry.0,
+            None => false,
+        }
+    }
+}
+
+// wrapper type for seq / Iterator
+impl Value for PSeq {
+    fn type_name(&self) -> &'static str {
+        "PSeq"
+    }
+
+    fn hash_id(&self) -> u64 {
+        // TODO: find a more efficient way to create a deterministic contents/value-based hash for a Set (or any collection)
+        // TODO: look into how Clojure hashes collections (ex: map, set)
+        // Note: we use BinaryHeap to order the hash values because hashing is stateful, and therefore, order-dependent.
+        let elem_hashes: BinaryHeap<u64> = self.0.iter().map(|e| e.deref().hash_id()).collect();
+        let sorted_hashes: Vec<u64> = elem_hashes.into_sorted_vec();
+
+        let mut hasher = DefaultHasher::new();
+        for eh in sorted_hashes.iter() {
+            eh.hash(&mut hasher);
+        }
+        let result = hasher.finish();
+        result
+    }
+
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
+
+    fn eq_test(&self, other: &dyn Value) -> bool {
+        match other.as_any().downcast_ref::<PSeq>() {
+            Some(seq) => &self.0 == &seq.0,
             None => false,
         }
     }
@@ -1245,7 +1283,33 @@ impl From<PEntry> for BValue {
     }
 }
 
+// Iterator<Item=BValue> <-> PSeq - downcasting / upcasting
 
+impl From<BValue> for PSeq {
+    fn from(v: BValue) -> PSeq {
+        if let Some(seq) = v.as_any().downcast_ref::<PSeq>() {
+            seq.clone()
+        } else {
+            panic!("Could not downcast Value into PSeq!");
+        }
+    }
+}
+
+impl From<&BValue> for PSeq {
+    fn from(v: &BValue) -> PSeq {
+        if let Some(pvec) = v.as_any().downcast_ref::<PSeq>() {
+            pvec.clone()
+        } else {
+            panic!("Could not downcast Value into PSeq!");
+        }
+    }
+}
+
+impl From<PSeq> for BValue {
+    fn from(v: PSeq) -> BValue {
+        Box::new(v)
+    }
+}
 
 
 //
@@ -1297,7 +1361,9 @@ impl Set {
         Self::default()
     }
 
-    pub fn len(&self) -> usize { self.0.len() }
+    pub fn len(&self) -> usize {
+        self.0.len()
+    }
 }
 
 //
@@ -1336,7 +1402,9 @@ impl Vector {
         Self::default()
     }
 
-    pub fn len(&self) -> usize { self.0.len() }
+    pub fn len(&self) -> usize {
+        self.0.len()
+    }
 }
 
 //
@@ -1362,7 +1430,9 @@ impl Map {
         Self::default()
     }
 
-    pub fn len(&self) -> usize { self.0.len() }
+    pub fn len(&self) -> usize {
+        self.0.len()
+    }
 }
 
 //
@@ -1388,21 +1458,19 @@ impl PMap {
         Self::default()
     }
 
-    pub fn len(&self) -> usize { self.0.size() }
+    pub fn len(&self) -> usize {
+        self.0.size()
+    }
 
-    pub fn seq(&self) -> impl Iterator<Item = BValue> + '_ {
-            self.0.iter().map(
-                |entry| {
-                    BValue::from(
-                        PEntry(
-                                rpds::Vector::new()
-                                    .push_back(entry.0.clone())
-                                    .push_back(entry.1.clone())
-
-                        )
-                    )
-                }
-            )
+    pub fn seq(&self) -> BValue {
+        let v: rpds::Vector<BValue> = self.0.iter().map(|entry| {
+            BValue::from(PEntry(
+                rpds::Vector::new()
+                    .push_back(entry.0.clone())
+                    .push_back(entry.1.clone()),
+            ))
+        }).collect();
+        BValue::from(PSeq(v))
     }
 
     pub fn dissoc(&self, k: BValue) -> PMap {
@@ -1437,7 +1505,9 @@ impl PSet {
         Self::default()
     }
 
-    pub fn len(&self) -> usize { self.0.size() }
+    pub fn len(&self) -> usize {
+        self.0.size()
+    }
 
     pub fn seq(&self) -> impl Iterator<Item = BValue> + '_ {
         self.0.iter().map(|x| x.clone())
@@ -1485,7 +1555,9 @@ impl PVector {
         Self::default()
     }
 
-    pub fn len(&self) -> usize { self.0.len() }
+    pub fn len(&self) -> usize {
+        self.0.len()
+    }
 
     pub fn seq(&self) -> impl Iterator<Item = BValue> + '_ {
         self.0.iter().map(|x| x.clone())
@@ -1528,14 +1600,20 @@ impl PersistentCollection for PMap {
                     .iter()
                     .for_each(|tuple| tmp_htm.insert_mut(tuple.0.clone(), tuple.1.clone()));
                 PMap(tmp_htm)
-            },
+            }
             "PVector" => {
                 let pvec = x.as_any().downcast_ref::<PVector>().unwrap();
-                let first = pvec.get(0).expect("PVector argument to conj into a PMap has 0 elements, needs 2");
-                let second = pvec.get(1).expect("PVector argument to conj into a PMap has 1 element, needs 2");
+                let first = pvec
+                    .get(0)
+                    .expect("PVector argument to conj into a PMap has 0 elements, needs 2");
+                let second = pvec
+                    .get(1)
+                    .expect("PVector argument to conj into a PMap has 1 element, needs 2");
                 PMap(self.0.insert(first.clone(), second.clone()))
-            },
-            _ => panic!("Could not downcast Value into HashTrieMap<BValue,BValue> or Vector<BValue>!")
+            }
+            _ => panic!(
+                "Could not downcast Value into HashTrieMap<BValue,BValue> or Vector<BValue>!"
+            ),
         }
     }
 
@@ -1543,7 +1621,6 @@ impl PersistentCollection for PMap {
         self.0.is_empty()
     }
 }
-
 
 impl PersistentCollection for PSet {
     fn conj(&self, x: BValue) -> Self {
@@ -1570,21 +1647,27 @@ pub fn conj(coll: BValue, x: BValue) -> BValue {
         "PMap" => BValue::from(coll.as_any().downcast_ref::<PMap>().unwrap().conj(x)),
         "PSet" => BValue::from(coll.as_any().downcast_ref::<PSet>().unwrap().conj(x)),
         "PVector" => BValue::from(coll.as_any().downcast_ref::<PVector>().unwrap().conj(x)),
-        _ => panic!("Could not downcast Value into provided Value trait implementing struct types!"),
+        _ => {
+            panic!("Could not downcast Value into provided Value trait implementing struct types!")
+        }
     }
 }
 
 pub fn disj(coll: BValue, x: BValue) -> BValue {
     match coll.type_name() {
         "PSet" => BValue::from(coll.as_any().downcast_ref::<PSet>().unwrap().disj(x)),
-        _ => panic!("Could not downcast Value into provided Value trait implementing struct types!"),
+        _ => {
+            panic!("Could not downcast Value into provided Value trait implementing struct types!")
+        }
     }
 }
 
 pub fn dissoc(coll: BValue, x: BValue) -> BValue {
     match coll.type_name() {
         "PMap" => BValue::from(coll.as_any().downcast_ref::<PMap>().unwrap().dissoc(x)),
-        _ => panic!("Could not downcast Value into provided Value trait implementing struct types!"),
+        _ => {
+            panic!("Could not downcast Value into provided Value trait implementing struct types!")
+        }
     }
 }
 
@@ -1594,38 +1677,51 @@ pub fn get(coll: BValue, x: BValue) -> BValue {
         "PSet" => coll.as_any().downcast_ref::<PSet>().unwrap().get(&x),
         "PVector" => {
             let idx = x.as_any().downcast_ref::<i64>().unwrap();
-            coll.as_any().downcast_ref::<PVector>().unwrap().get(*idx as usize)
-        },
-        _ => panic!("Could not downcast Value into provided Value trait implementing struct types!"),
-    }.unwrap_or(&BValue::from(NIL)).clone()
+            coll.as_any()
+                .downcast_ref::<PVector>()
+                .unwrap()
+                .get(*idx as usize)
+        }
+        _ => {
+            panic!("Could not downcast Value into provided Value trait implementing struct types!")
+        }
+    }
+    .unwrap_or(&BValue::from(NIL))
+    .clone()
 }
 
 /// We return a BValue of a PSet (unlike Clojure)
 pub fn keys(m: BValue) -> BValue {
     match m.type_name() {
-        "PMap" => BValue::from(
-            PSet(
-                rpds::HashTrieSet::from_iter(
-                    m.as_any().downcast_ref::<PMap>().unwrap().0.keys().cloned()
-                )
-            )
-        ),
+        "PMap" => BValue::from(PSet(rpds::HashTrieSet::from_iter(
+            m.as_any().downcast_ref::<PMap>().unwrap().0.keys().cloned(),
+        ))),
         "PSet" => m,
-        _ => panic!("Could not get keys() from BValue of type {}!", m.type_name()),
+        _ => panic!(
+            "Could not get keys() from BValue of type {}!",
+            m.type_name()
+        ),
     }
 }
 
 pub fn contains(coll: BValue, k: BValue) -> bool {
     match coll.type_name() {
-        "PMap" =>
-            coll.as_any().downcast_ref::<PMap>().unwrap().0.contains_key(&k),
+        "PMap" => coll
+            .as_any()
+            .downcast_ref::<PMap>()
+            .unwrap()
+            .0
+            .contains_key(&k),
         "PSet" => coll.as_any().downcast_ref::<PSet>().unwrap().0.contains(&k),
         "PVector" => {
             let count: usize = coll.as_any().downcast_ref::<PVector>().unwrap().0.len();
             let idx: usize = *(k.as_any().downcast_ref::<i64>().unwrap()) as usize;
-            idx < count  // usize implies non-negative
-        },
-        _ => panic!("Could not get keys() from BValue of type {}!", coll.type_name()),
+            idx < count // usize implies non-negative
+        }
+        _ => panic!(
+            "Could not get keys() from BValue of type {}!",
+            coll.type_name()
+        ),
     }
 }
 
@@ -1634,7 +1730,9 @@ pub fn is_empty(coll: BValue) -> bool {
         "PMap" => coll.as_any().downcast_ref::<PMap>().unwrap().is_empty(),
         "PSet" => coll.as_any().downcast_ref::<PSet>().unwrap().is_empty(),
         "PVector" => coll.as_any().downcast_ref::<PVector>().unwrap().is_empty(),
-        _ => panic!("Could not downcast Value into provided Value trait implementing struct types!"),
+        _ => {
+            panic!("Could not downcast Value into provided Value trait implementing struct types!")
+        }
     }
 }
 
@@ -1646,38 +1744,56 @@ pub fn not_empty(coll: BValue) -> bool {
     !is_empty(coll)
 }
 
-pub fn vec(i: impl Iterator<Item = BValue>) -> PVector {
-    PVector(
-        rpds::Vector::from_iter(
-            i
-        )
-    )
+pub fn vec(i: BValue) -> PVector {
+    let seq = pseq(i);
+    PVector(seq.0)
 }
 
-pub fn max<T: Ord>(a: T, b: T) -> T { std::cmp::max(a, b) }
+pub fn max<T: Ord>(a: T, b: T) -> T {
+    std::cmp::max(a, b)
+}
 
 pub fn assoc(coll: BValue, k: BValue, v: BValue) -> BValue {
     conj(coll, BValue::from(PVector::new().push(k).push(v)))
 }
 
-pub fn range(n: i64) -> impl Iterator<Item = BValue> {
-    (0..n)
-        .map(|x| BValue::from(x))
+pub fn range(n: i64) -> BValue {
+    let v: rpds::Vector<BValue> = (0..n).map(|x| BValue::from(x)).collect();
+    BValue::from(PSeq(v))
 }
 
-pub fn repeat(n: i64, x: BValue) -> impl Iterator<Item = BValue> {
-    std::iter::repeat(x).take(n as usize)
+pub fn repeat(n: i64, x: BValue) -> BValue {
+    let v: rpds::Vector<BValue> = std::iter::repeat(x).take(n as usize).collect();
+    BValue::from(PSeq(v))
 }
 
-pub fn seq(coll: BValue) -> Box<dyn Iterator<Item = BValue>> {
+pub fn seq(coll: BValue) -> BValue {
     match coll.type_name() {
         "PMap" => Box::from(coll.as_any().downcast_ref::<PMap>().unwrap().seq()),
-        "PSet" => Box::from(coll.as_any().downcast_ref::<PSet>().unwrap().seq()),
-        "PVector" => Box::from(coll.as_any().downcast_ref::<PVector>().unwrap().seq()),
+        // "PSet" => Box::from(coll.as_any().downcast_ref::<PSet>().unwrap().seq()),
+        // "PVector" => Box::from(coll.as_any().downcast_ref::<PVector>().unwrap().seq()),
         _ => {
             panic!("Could not downcast Value into provided Value trait implementing struct types!")
         }
     }
+}
+
+pub fn map(
+    f: impl Fn(BValue) -> BValue,
+    xs: BValue
+) -> BValue {
+    let v: rpds::Vector<BValue> = pseq(xs).0.iter().cloned().map(f).collect();
+    BValue::from(v)
+}
+
+pub fn map2(
+    f: impl Fn(BValue, BValue) -> BValue,
+    seq1: BValue,
+    seq2: BValue,
+) -> BValue {
+    let v: rpds::Vector<BValue> = std::iter::zip(pseq(seq1).0.iter(), pseq(seq2).0.iter())
+        .map(|x| f(x.0.clone(), x.1.clone())).collect();
+    BValue::from(v)
 }
 
 pub fn count(coll: BValue) -> i64 {
@@ -1689,14 +1805,32 @@ pub fn count(coll: BValue) -> i64 {
         _ => {
             panic!("Could not downcast Value into provided Value trait implementing struct types!")
         }
-    })
-    as i64
+    }) as i64
 }
 
+pub fn reduce(
+    f: impl Fn(BValue, BValue) -> BValue,
+    init: BValue,
+    xs: BValue,
+) -> BValue {
+    pseq(xs).0.iter().cloned().fold(init, f)
+}
 
-pub fn reduce(f: impl Fn(BValue, BValue) -> BValue, init: BValue, xs: impl Iterator<Item = BValue>) -> BValue
-{
-    xs.fold(init, f)
+pub fn first(
+    seq1: BValue
+) -> BValue {
+    pseq(seq1).0.iter().next().unwrap().clone()
+}
+
+pub fn pseq(xs: BValue) -> PSeq {
+    match xs.type_name() {
+        "PSeq" => {
+             xs.as_any().downcast_ref::<PSeq>().unwrap().clone()
+         },
+        _ => {
+            panic!("Could not downcast Value into provided Value trait implementing struct types!")
+        }
+    }
 }
 
 /* TODO:
@@ -1919,10 +2053,10 @@ mod tests {
 
         assert!(s.contains_f32(3.14)); // autogenerated by Kalai
 
-        let f_box_2 = BValue::from(6.28);  // use this for .contains() querying
+        let f_box_2 = BValue::from(6.28); // use this for .contains() querying
         assert!(!s.contains(&f_box_2));
 
-        let f_box_3 = BValue::from(6.28);  // put this into set
+        let f_box_3 = BValue::from(6.28); // put this into set
         s.insert(f_box_3);
         assert!(s.contains(&f_box_2));
     }
@@ -1996,28 +2130,24 @@ mod tests {
 
     #[test]
     fn test_persistent_map() {
-        let m: rpds::HashTrieMap<String, i64> =
-            rpds::HashTrieMap::new()
-                .insert(String::from(":x"), 11)
-                .insert(String::from(":y"), 13);
+        let m: rpds::HashTrieMap<String, i64> = rpds::HashTrieMap::new()
+            .insert(String::from(":x"), 11)
+            .insert(String::from(":y"), 13);
         let x: i64 = *(m.get(":x").unwrap());
 
-        let m2: rpds::HashTrieMap<String, BValue> =
-            rpds::HashTrieMap::new()
-                .insert(String::from(":x"), BValue::from(11.0f64))
-                .insert(String::from(":y"), BValue::from(13i64));
+        let m2: rpds::HashTrieMap<String, BValue> = rpds::HashTrieMap::new()
+            .insert(String::from(":x"), BValue::from(11.0f64))
+            .insert(String::from(":y"), BValue::from(13i64));
         let x: f64 = f64::from(m2.get(":x").unwrap());
 
-        let pm2: PMap =
-            PMap::new()
-                .insert(BValue::from(":x"), BValue::from(11i64))
-                .insert(BValue::from(":y"), BValue::from(13i32));
+        let pm2: PMap = PMap::new()
+            .insert(BValue::from(":x"), BValue::from(11i64))
+            .insert(BValue::from(":y"), BValue::from(13i32));
         let x: i64 = i64::from(pm2.get(&BValue::from(":x")).unwrap());
 
-        let pm3: PMap =
-            PMap::new()
-                .insert(BValue::from(":xy"), BValue::from(pm2))
-                .insert(BValue::from(":a"), BValue::from(17i32));
+        let pm3: PMap = PMap::new()
+            .insert(BValue::from(":xy"), BValue::from(pm2))
+            .insert(BValue::from(":a"), BValue::from(17i32));
 
         /*
         {:a 17
@@ -2033,12 +2163,9 @@ mod tests {
         assert_eq!(x, 30);
     }
 
-
     #[test]
     fn iterator_test() {
-        let v: rpds::Vector<i64> = rpds::Vector::new()
-            .push_back(11)
-            .push_back(13);
+        let v: rpds::Vector<i64> = rpds::Vector::new().push_back(11).push_back(13);
         let sum = v.iter().fold(0, |acc, x| acc + x);
         assert_eq!(sum, 24);
     }
@@ -2073,14 +2200,14 @@ mod tests {
         let bv = BValue::from(pv);
         let s = seq(&bv);
 
-        let f = |acc: BValue, x: BValue|
+        let f = |acc: BValue, x: BValue| {
             BValue::from(
                 acc.as_any().downcast_ref::<i32>().unwrap()
-                    + x.as_any().downcast_ref::<i32>().unwrap()
-            );
+                    + x.as_any().downcast_ref::<i32>().unwrap(),
+            )
+        };
 
-
-        let sum = reduce(f,BValue::from(0_i32),s);
+        let sum = reduce(f, BValue::from(0_i32), s);
         let sum_deref = sum.as_any().downcast_ref::<i32>().unwrap();
         assert_eq!(*sum_deref, 24_i32);
     }
@@ -2093,14 +2220,14 @@ mod tests {
         let bv = BValue::from(ps);
         let s = seq(&bv);
 
-        let f = |acc: BValue, x: BValue|
+        let f = |acc: BValue, x: BValue| {
             BValue::from(
                 acc.as_any().downcast_ref::<i32>().unwrap()
-                    + x.as_any().downcast_ref::<i32>().unwrap()
-            );
+                    + x.as_any().downcast_ref::<i32>().unwrap(),
+            )
+        };
 
-
-        let sum = reduce(f,BValue::from(0_i32),s);
+        let sum = reduce(f, BValue::from(0_i32), s);
         let sum_deref = sum.as_any().downcast_ref::<i32>().unwrap();
         assert_eq!(*sum_deref, 24_i32);
     }
@@ -2118,14 +2245,10 @@ mod tests {
             let key = pe.key();
             let key_int = key.as_any().downcast_ref::<i32>().unwrap();
 
-            BValue::from(
-                acc.as_any().downcast_ref::<i32>().unwrap()
-                    + key_int
-            )
+            BValue::from(acc.as_any().downcast_ref::<i32>().unwrap() + key_int)
         };
 
-
-        let sum = reduce(f,BValue::from(0_i32),s);
+        let sum = reduce(f, BValue::from(0_i32), s);
         let sum_deref = sum.as_any().downcast_ref::<i32>().unwrap();
         assert_eq!(*sum_deref, 24_i32);
     }
