@@ -1656,3 +1656,26 @@ tmp3
            ^{:t {:map [:string :long]}} {:b 2})
     '(invoke conj {:a 1} {:b 2})
     "conj(rpds::HashTrieMap::new().insert(String::from(\":a\"), 1i64), rpds::HashTrieMap::new().insert(String::from(\":b\"), 2i64));"))
+
+(deftest rust-clone-annotation
+  (top-level-form
+    '(defn diff
+       [^{:t :any} a, ^{:t :any} b]
+       (if (= a b)
+         ^{:t {:vector [:any]} :cast :any}
+         [nil nil a]
+         (+ a b)))
+    '(function diff [a b]
+               (if (operator == a b)
+                 (return [nil nil a])
+                 (return (operator + a b))))
+    "pub fn diff(a: kalai::BValue, b: kalai::BValue) -> kalai::BValue {
+if (a.clone() == b.clone())
+{
+return kalai::BValue::from(rpds::Vector::new().push_back(kalai::BValue::from(kalai::NIL).clone().clone()).push_back(kalai::BValue::from(kalai::NIL).clone().clone()).push_back(a.clone().clone()).clone());
+}
+else
+{
+return (a.clone() + b.clone());
+}
+}"))
