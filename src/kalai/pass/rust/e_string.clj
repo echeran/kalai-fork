@@ -38,7 +38,7 @@
     (str (when ref "&")
          (when mut "mut ")
          (stringify arg)
-         (when-not (or ref
+         #_(when-not (or ref
                        is-seq
                        ;; Don't add `.clone()` to a lambda in Rust. Compiler has type inference problems
                        (is-arg-lambda? arg))
@@ -452,7 +452,9 @@
 
     ;; identifier
     (m/pred symbol? ?s)
-    (ru/identifier ?s)
+    (str
+      (ru/identifier ?s)
+      ".clone()")
 
     ?else
     (pr-str ?else)))
