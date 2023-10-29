@@ -5,8 +5,7 @@
             [puget.printer :as puget]
             [kalai.types :as types]
             [camel-snake-kebab.core :as csk]
-            [camel-snake-kebab.internals.string-separator :as csk-ss]
-            [scicloj.kind-portal.v1.api :as kp]))
+            [camel-snake-kebab.internals.string-separator :as csk-ss]))
 
 (def c
   "The counter used by `gensym2` to implement the auto-increment number suffix."
@@ -27,11 +26,6 @@ and uses an auto-incrementing number as a suffix for uniqueness."
    (flush)
    (binding [*print-meta* true]
      (doto x puget/pprint))))
-
-(defn spy-portal
-  [x]
-  (kp/kindly-submit-context {:value x})
-  x)
 
 (defn tmp
   "Creates a unique symbol (named via `gensym2`) with the metadata necessary for
