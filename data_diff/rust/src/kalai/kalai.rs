@@ -4,7 +4,8 @@ use std::collections::hash_map::DefaultHasher;
 use std::collections::HashSet;
 use std::collections::{BinaryHeap, HashMap};
 use std::convert::TryInto;
-use std::fmt::Debug;
+use std::error::Error;
+use std::fmt::{Debug, Display, Formatter};
 use std::hash::{BuildHasher, Hash, Hasher};
 use std::iter::FromIterator;
 use std::ops::{Add, Deref};
@@ -132,6 +133,12 @@ impl PartialEq for dyn Value {
 }
 
 impl Eq for dyn Value {}
+
+impl Display for dyn Value {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        <Value as Debug>::fmt(self, f)
+    }
+}
 
 // TODO: we should investigate whether it is better to implement Copy instead
 // of Clone, and which to be more choosy in implementing for the Value trait
@@ -2240,911 +2247,1087 @@ mod tests {
 
 impl Set {
     pub fn contains_bool(&self, x: bool) -> bool {
-        return self.contains(&crate::kalai::kalai::BValue::from(x.clone()));
+        return self
+            .clone()
+            .contains(&crate::kalai::kalai::BValue::from(x.clone()));
     }
     pub fn contains_i8(&self, x: i8) -> bool {
-        return self.contains(&crate::kalai::kalai::BValue::from(x.clone()));
+        return self
+            .clone()
+            .contains(&crate::kalai::kalai::BValue::from(x.clone()));
     }
     pub fn contains_char(&self, x: char) -> bool {
-        return self.contains(&crate::kalai::kalai::BValue::from(x.clone()));
+        return self
+            .clone()
+            .contains(&crate::kalai::kalai::BValue::from(x.clone()));
     }
     pub fn contains_i32(&self, x: i32) -> bool {
-        return self.contains(&crate::kalai::kalai::BValue::from(x.clone()));
+        return self
+            .clone()
+            .contains(&crate::kalai::kalai::BValue::from(x.clone()));
     }
     pub fn contains_i64(&self, x: i64) -> bool {
-        return self.contains(&crate::kalai::kalai::BValue::from(x.clone()));
+        return self
+            .clone()
+            .contains(&crate::kalai::kalai::BValue::from(x.clone()));
     }
     pub fn contains_f32(&self, x: f32) -> bool {
-        return self.contains(&crate::kalai::kalai::BValue::from(x.clone()));
+        return self
+            .clone()
+            .contains(&crate::kalai::kalai::BValue::from(x.clone()));
     }
     pub fn contains_f64(&self, x: f64) -> bool {
-        return self.contains(&crate::kalai::kalai::BValue::from(x.clone()));
+        return self
+            .clone()
+            .contains(&crate::kalai::kalai::BValue::from(x.clone()));
     }
     pub fn contains_string(&self, x: String) -> bool {
-        return self.contains(&crate::kalai::kalai::BValue::from(x.clone()));
+        return self
+            .clone()
+            .contains(&crate::kalai::kalai::BValue::from(x.clone()));
     }
     pub fn insert_bool(&mut self, x: bool) -> bool {
-        return self.insert(crate::kalai::kalai::BValue::from(x.clone()).clone());
+        return self
+            .clone()
+            .insert(crate::kalai::kalai::BValue::from(x.clone()));
     }
     pub fn insert_i8(&mut self, x: i8) -> bool {
-        return self.insert(crate::kalai::kalai::BValue::from(x.clone()).clone());
+        return self
+            .clone()
+            .insert(crate::kalai::kalai::BValue::from(x.clone()));
     }
     pub fn insert_char(&mut self, x: char) -> bool {
-        return self.insert(crate::kalai::kalai::BValue::from(x.clone()).clone());
+        return self
+            .clone()
+            .insert(crate::kalai::kalai::BValue::from(x.clone()));
     }
     pub fn insert_i32(&mut self, x: i32) -> bool {
-        return self.insert(crate::kalai::kalai::BValue::from(x.clone()).clone());
+        return self
+            .clone()
+            .insert(crate::kalai::kalai::BValue::from(x.clone()));
     }
     pub fn insert_i64(&mut self, x: i64) -> bool {
-        return self.insert(crate::kalai::kalai::BValue::from(x.clone()).clone());
+        return self
+            .clone()
+            .insert(crate::kalai::kalai::BValue::from(x.clone()));
     }
     pub fn insert_f32(&mut self, x: f32) -> bool {
-        return self.insert(crate::kalai::kalai::BValue::from(x.clone()).clone());
+        return self
+            .clone()
+            .insert(crate::kalai::kalai::BValue::from(x.clone()));
     }
     pub fn insert_f64(&mut self, x: f64) -> bool {
-        return self.insert(crate::kalai::kalai::BValue::from(x.clone()).clone());
+        return self
+            .clone()
+            .insert(crate::kalai::kalai::BValue::from(x.clone()));
     }
     pub fn insert_string(&mut self, x: String) -> bool {
-        return self.insert(crate::kalai::kalai::BValue::from(x.clone()).clone());
+        return self
+            .clone()
+            .insert(crate::kalai::kalai::BValue::from(x.clone()));
     }
 }
 impl Map {
     pub fn insert_bool_bool(&mut self, k: bool, v: bool) -> Option<bool> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(bool::from.clone());
+            .map(bool::from);
     }
     pub fn insert_bool_i8(&mut self, k: bool, v: i8) -> Option<i8> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(i8::from.clone());
+            .map(i8::from);
     }
     pub fn insert_bool_char(&mut self, k: bool, v: char) -> Option<char> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(char::from.clone());
+            .map(char::from);
     }
     pub fn insert_bool_i32(&mut self, k: bool, v: i32) -> Option<i32> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(i32::from.clone());
+            .map(i32::from);
     }
     pub fn insert_bool_i64(&mut self, k: bool, v: i64) -> Option<i64> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(i64::from.clone());
+            .map(i64::from);
     }
     pub fn insert_bool_f32(&mut self, k: bool, v: f32) -> Option<f32> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(f32::from.clone());
+            .map(f32::from);
     }
     pub fn insert_bool_f64(&mut self, k: bool, v: f64) -> Option<f64> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(f64::from.clone());
+            .map(f64::from);
     }
     pub fn insert_bool_string(&mut self, k: bool, v: String) -> Option<String> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(String::from.clone());
+            .map(String::from);
     }
     pub fn insert_i8_bool(&mut self, k: i8, v: bool) -> Option<bool> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(bool::from.clone());
+            .map(bool::from);
     }
     pub fn insert_i8_i8(&mut self, k: i8, v: i8) -> Option<i8> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(i8::from.clone());
+            .map(i8::from);
     }
     pub fn insert_i8_char(&mut self, k: i8, v: char) -> Option<char> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(char::from.clone());
+            .map(char::from);
     }
     pub fn insert_i8_i32(&mut self, k: i8, v: i32) -> Option<i32> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(i32::from.clone());
+            .map(i32::from);
     }
     pub fn insert_i8_i64(&mut self, k: i8, v: i64) -> Option<i64> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(i64::from.clone());
+            .map(i64::from);
     }
     pub fn insert_i8_f32(&mut self, k: i8, v: f32) -> Option<f32> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(f32::from.clone());
+            .map(f32::from);
     }
     pub fn insert_i8_f64(&mut self, k: i8, v: f64) -> Option<f64> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(f64::from.clone());
+            .map(f64::from);
     }
     pub fn insert_i8_string(&mut self, k: i8, v: String) -> Option<String> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(String::from.clone());
+            .map(String::from);
     }
     pub fn insert_char_bool(&mut self, k: char, v: bool) -> Option<bool> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(bool::from.clone());
+            .map(bool::from);
     }
     pub fn insert_char_i8(&mut self, k: char, v: i8) -> Option<i8> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(i8::from.clone());
+            .map(i8::from);
     }
     pub fn insert_char_char(&mut self, k: char, v: char) -> Option<char> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(char::from.clone());
+            .map(char::from);
     }
     pub fn insert_char_i32(&mut self, k: char, v: i32) -> Option<i32> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(i32::from.clone());
+            .map(i32::from);
     }
     pub fn insert_char_i64(&mut self, k: char, v: i64) -> Option<i64> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(i64::from.clone());
+            .map(i64::from);
     }
     pub fn insert_char_f32(&mut self, k: char, v: f32) -> Option<f32> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(f32::from.clone());
+            .map(f32::from);
     }
     pub fn insert_char_f64(&mut self, k: char, v: f64) -> Option<f64> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(f64::from.clone());
+            .map(f64::from);
     }
     pub fn insert_char_string(&mut self, k: char, v: String) -> Option<String> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(String::from.clone());
+            .map(String::from);
     }
     pub fn insert_i32_bool(&mut self, k: i32, v: bool) -> Option<bool> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(bool::from.clone());
+            .map(bool::from);
     }
     pub fn insert_i32_i8(&mut self, k: i32, v: i8) -> Option<i8> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(i8::from.clone());
+            .map(i8::from);
     }
     pub fn insert_i32_char(&mut self, k: i32, v: char) -> Option<char> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(char::from.clone());
+            .map(char::from);
     }
     pub fn insert_i32_i32(&mut self, k: i32, v: i32) -> Option<i32> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(i32::from.clone());
+            .map(i32::from);
     }
     pub fn insert_i32_i64(&mut self, k: i32, v: i64) -> Option<i64> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(i64::from.clone());
+            .map(i64::from);
     }
     pub fn insert_i32_f32(&mut self, k: i32, v: f32) -> Option<f32> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(f32::from.clone());
+            .map(f32::from);
     }
     pub fn insert_i32_f64(&mut self, k: i32, v: f64) -> Option<f64> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(f64::from.clone());
+            .map(f64::from);
     }
     pub fn insert_i32_string(&mut self, k: i32, v: String) -> Option<String> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(String::from.clone());
+            .map(String::from);
     }
     pub fn insert_i64_bool(&mut self, k: i64, v: bool) -> Option<bool> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(bool::from.clone());
+            .map(bool::from);
     }
     pub fn insert_i64_i8(&mut self, k: i64, v: i8) -> Option<i8> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(i8::from.clone());
+            .map(i8::from);
     }
     pub fn insert_i64_char(&mut self, k: i64, v: char) -> Option<char> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(char::from.clone());
+            .map(char::from);
     }
     pub fn insert_i64_i32(&mut self, k: i64, v: i32) -> Option<i32> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(i32::from.clone());
+            .map(i32::from);
     }
     pub fn insert_i64_i64(&mut self, k: i64, v: i64) -> Option<i64> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(i64::from.clone());
+            .map(i64::from);
     }
     pub fn insert_i64_f32(&mut self, k: i64, v: f32) -> Option<f32> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(f32::from.clone());
+            .map(f32::from);
     }
     pub fn insert_i64_f64(&mut self, k: i64, v: f64) -> Option<f64> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(f64::from.clone());
+            .map(f64::from);
     }
     pub fn insert_i64_string(&mut self, k: i64, v: String) -> Option<String> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(String::from.clone());
+            .map(String::from);
     }
     pub fn insert_f32_bool(&mut self, k: f32, v: bool) -> Option<bool> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(bool::from.clone());
+            .map(bool::from);
     }
     pub fn insert_f32_i8(&mut self, k: f32, v: i8) -> Option<i8> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(i8::from.clone());
+            .map(i8::from);
     }
     pub fn insert_f32_char(&mut self, k: f32, v: char) -> Option<char> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(char::from.clone());
+            .map(char::from);
     }
     pub fn insert_f32_i32(&mut self, k: f32, v: i32) -> Option<i32> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(i32::from.clone());
+            .map(i32::from);
     }
     pub fn insert_f32_i64(&mut self, k: f32, v: i64) -> Option<i64> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(i64::from.clone());
+            .map(i64::from);
     }
     pub fn insert_f32_f32(&mut self, k: f32, v: f32) -> Option<f32> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(f32::from.clone());
+            .map(f32::from);
     }
     pub fn insert_f32_f64(&mut self, k: f32, v: f64) -> Option<f64> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(f64::from.clone());
+            .map(f64::from);
     }
     pub fn insert_f32_string(&mut self, k: f32, v: String) -> Option<String> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(String::from.clone());
+            .map(String::from);
     }
     pub fn insert_f64_bool(&mut self, k: f64, v: bool) -> Option<bool> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(bool::from.clone());
+            .map(bool::from);
     }
     pub fn insert_f64_i8(&mut self, k: f64, v: i8) -> Option<i8> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(i8::from.clone());
+            .map(i8::from);
     }
     pub fn insert_f64_char(&mut self, k: f64, v: char) -> Option<char> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(char::from.clone());
+            .map(char::from);
     }
     pub fn insert_f64_i32(&mut self, k: f64, v: i32) -> Option<i32> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(i32::from.clone());
+            .map(i32::from);
     }
     pub fn insert_f64_i64(&mut self, k: f64, v: i64) -> Option<i64> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(i64::from.clone());
+            .map(i64::from);
     }
     pub fn insert_f64_f32(&mut self, k: f64, v: f32) -> Option<f32> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(f32::from.clone());
+            .map(f32::from);
     }
     pub fn insert_f64_f64(&mut self, k: f64, v: f64) -> Option<f64> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(f64::from.clone());
+            .map(f64::from);
     }
     pub fn insert_f64_string(&mut self, k: f64, v: String) -> Option<String> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(String::from.clone());
+            .map(String::from);
     }
     pub fn insert_string_bool(&mut self, k: String, v: bool) -> Option<bool> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(bool::from.clone());
+            .map(bool::from);
     }
     pub fn insert_string_i8(&mut self, k: String, v: i8) -> Option<i8> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(i8::from.clone());
+            .map(i8::from);
     }
     pub fn insert_string_char(&mut self, k: String, v: char) -> Option<char> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(char::from.clone());
+            .map(char::from);
     }
     pub fn insert_string_i32(&mut self, k: String, v: i32) -> Option<i32> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(i32::from.clone());
+            .map(i32::from);
     }
     pub fn insert_string_i64(&mut self, k: String, v: i64) -> Option<i64> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(i64::from.clone());
+            .map(i64::from);
     }
     pub fn insert_string_f32(&mut self, k: String, v: f32) -> Option<f32> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(f32::from.clone());
+            .map(f32::from);
     }
     pub fn insert_string_f64(&mut self, k: String, v: f64) -> Option<f64> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(f64::from.clone());
+            .map(f64::from);
     }
     pub fn insert_string_string(&mut self, k: String, v: String) -> Option<String> {
         return self
+            .clone()
             .insert(
-                crate::kalai::kalai::BValue::from(k.clone()).clone(),
-                crate::kalai::kalai::BValue::from(v.clone()).clone(),
+                crate::kalai::kalai::BValue::from(k.clone()),
+                crate::kalai::kalai::BValue::from(v.clone()),
             )
-            .map(String::from.clone());
+            .map(String::from);
     }
     pub fn get_bool_bool(&self, k: &bool) -> Option<bool> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(bool::from.clone());
+            .map(bool::from);
     }
     pub fn get_bool_i8(&self, k: &bool) -> Option<i8> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(i8::from.clone());
+            .map(i8::from);
     }
     pub fn get_bool_char(&self, k: &bool) -> Option<char> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(char::from.clone());
+            .map(char::from);
     }
     pub fn get_bool_i32(&self, k: &bool) -> Option<i32> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(i32::from.clone());
+            .map(i32::from);
     }
     pub fn get_bool_i64(&self, k: &bool) -> Option<i64> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(i64::from.clone());
+            .map(i64::from);
     }
     pub fn get_bool_f32(&self, k: &bool) -> Option<f32> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(f32::from.clone());
+            .map(f32::from);
     }
     pub fn get_bool_f64(&self, k: &bool) -> Option<f64> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(f64::from.clone());
+            .map(f64::from);
     }
     pub fn get_bool_string(&self, k: &bool) -> Option<String> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(String::from.clone());
+            .map(String::from);
     }
     pub fn get_i8_bool(&self, k: &i8) -> Option<bool> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(bool::from.clone());
+            .map(bool::from);
     }
     pub fn get_i8_i8(&self, k: &i8) -> Option<i8> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(i8::from.clone());
+            .map(i8::from);
     }
     pub fn get_i8_char(&self, k: &i8) -> Option<char> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(char::from.clone());
+            .map(char::from);
     }
     pub fn get_i8_i32(&self, k: &i8) -> Option<i32> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(i32::from.clone());
+            .map(i32::from);
     }
     pub fn get_i8_i64(&self, k: &i8) -> Option<i64> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(i64::from.clone());
+            .map(i64::from);
     }
     pub fn get_i8_f32(&self, k: &i8) -> Option<f32> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(f32::from.clone());
+            .map(f32::from);
     }
     pub fn get_i8_f64(&self, k: &i8) -> Option<f64> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(f64::from.clone());
+            .map(f64::from);
     }
     pub fn get_i8_string(&self, k: &i8) -> Option<String> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(String::from.clone());
+            .map(String::from);
     }
     pub fn get_char_bool(&self, k: &char) -> Option<bool> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(bool::from.clone());
+            .map(bool::from);
     }
     pub fn get_char_i8(&self, k: &char) -> Option<i8> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(i8::from.clone());
+            .map(i8::from);
     }
     pub fn get_char_char(&self, k: &char) -> Option<char> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(char::from.clone());
+            .map(char::from);
     }
     pub fn get_char_i32(&self, k: &char) -> Option<i32> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(i32::from.clone());
+            .map(i32::from);
     }
     pub fn get_char_i64(&self, k: &char) -> Option<i64> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(i64::from.clone());
+            .map(i64::from);
     }
     pub fn get_char_f32(&self, k: &char) -> Option<f32> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(f32::from.clone());
+            .map(f32::from);
     }
     pub fn get_char_f64(&self, k: &char) -> Option<f64> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(f64::from.clone());
+            .map(f64::from);
     }
     pub fn get_char_string(&self, k: &char) -> Option<String> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(String::from.clone());
+            .map(String::from);
     }
     pub fn get_i32_bool(&self, k: &i32) -> Option<bool> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(bool::from.clone());
+            .map(bool::from);
     }
     pub fn get_i32_i8(&self, k: &i32) -> Option<i8> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(i8::from.clone());
+            .map(i8::from);
     }
     pub fn get_i32_char(&self, k: &i32) -> Option<char> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(char::from.clone());
+            .map(char::from);
     }
     pub fn get_i32_i32(&self, k: &i32) -> Option<i32> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(i32::from.clone());
+            .map(i32::from);
     }
     pub fn get_i32_i64(&self, k: &i32) -> Option<i64> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(i64::from.clone());
+            .map(i64::from);
     }
     pub fn get_i32_f32(&self, k: &i32) -> Option<f32> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(f32::from.clone());
+            .map(f32::from);
     }
     pub fn get_i32_f64(&self, k: &i32) -> Option<f64> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(f64::from.clone());
+            .map(f64::from);
     }
     pub fn get_i32_string(&self, k: &i32) -> Option<String> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(String::from.clone());
+            .map(String::from);
     }
     pub fn get_i64_bool(&self, k: &i64) -> Option<bool> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(bool::from.clone());
+            .map(bool::from);
     }
     pub fn get_i64_i8(&self, k: &i64) -> Option<i8> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(i8::from.clone());
+            .map(i8::from);
     }
     pub fn get_i64_char(&self, k: &i64) -> Option<char> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(char::from.clone());
+            .map(char::from);
     }
     pub fn get_i64_i32(&self, k: &i64) -> Option<i32> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(i32::from.clone());
+            .map(i32::from);
     }
     pub fn get_i64_i64(&self, k: &i64) -> Option<i64> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(i64::from.clone());
+            .map(i64::from);
     }
     pub fn get_i64_f32(&self, k: &i64) -> Option<f32> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(f32::from.clone());
+            .map(f32::from);
     }
     pub fn get_i64_f64(&self, k: &i64) -> Option<f64> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(f64::from.clone());
+            .map(f64::from);
     }
     pub fn get_i64_string(&self, k: &i64) -> Option<String> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(String::from.clone());
+            .map(String::from);
     }
     pub fn get_f32_bool(&self, k: &f32) -> Option<bool> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(bool::from.clone());
+            .map(bool::from);
     }
     pub fn get_f32_i8(&self, k: &f32) -> Option<i8> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(i8::from.clone());
+            .map(i8::from);
     }
     pub fn get_f32_char(&self, k: &f32) -> Option<char> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(char::from.clone());
+            .map(char::from);
     }
     pub fn get_f32_i32(&self, k: &f32) -> Option<i32> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(i32::from.clone());
+            .map(i32::from);
     }
     pub fn get_f32_i64(&self, k: &f32) -> Option<i64> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(i64::from.clone());
+            .map(i64::from);
     }
     pub fn get_f32_f32(&self, k: &f32) -> Option<f32> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(f32::from.clone());
+            .map(f32::from);
     }
     pub fn get_f32_f64(&self, k: &f32) -> Option<f64> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(f64::from.clone());
+            .map(f64::from);
     }
     pub fn get_f32_string(&self, k: &f32) -> Option<String> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(String::from.clone());
+            .map(String::from);
     }
     pub fn get_f64_bool(&self, k: &f64) -> Option<bool> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(bool::from.clone());
+            .map(bool::from);
     }
     pub fn get_f64_i8(&self, k: &f64) -> Option<i8> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(i8::from.clone());
+            .map(i8::from);
     }
     pub fn get_f64_char(&self, k: &f64) -> Option<char> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(char::from.clone());
+            .map(char::from);
     }
     pub fn get_f64_i32(&self, k: &f64) -> Option<i32> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(i32::from.clone());
+            .map(i32::from);
     }
     pub fn get_f64_i64(&self, k: &f64) -> Option<i64> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(i64::from.clone());
+            .map(i64::from);
     }
     pub fn get_f64_f32(&self, k: &f64) -> Option<f32> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(f32::from.clone());
+            .map(f32::from);
     }
     pub fn get_f64_f64(&self, k: &f64) -> Option<f64> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(f64::from.clone());
+            .map(f64::from);
     }
     pub fn get_f64_string(&self, k: &f64) -> Option<String> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(String::from.clone());
+            .map(String::from);
     }
     pub fn get_string_bool(&self, k: &String) -> Option<bool> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(bool::from.clone());
+            .map(bool::from);
     }
     pub fn get_string_i8(&self, k: &String) -> Option<i8> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(i8::from.clone());
+            .map(i8::from);
     }
     pub fn get_string_char(&self, k: &String) -> Option<char> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(char::from.clone());
+            .map(char::from);
     }
     pub fn get_string_i32(&self, k: &String) -> Option<i32> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(i32::from.clone());
+            .map(i32::from);
     }
     pub fn get_string_i64(&self, k: &String) -> Option<i64> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(i64::from.clone());
+            .map(i64::from);
     }
     pub fn get_string_f32(&self, k: &String) -> Option<f32> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(f32::from.clone());
+            .map(f32::from);
     }
     pub fn get_string_f64(&self, k: &String) -> Option<f64> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(f64::from.clone());
+            .map(f64::from);
     }
     pub fn get_string_string(&self, k: &String) -> Option<String> {
         return self
+            .clone()
             .get(&crate::kalai::kalai::BValue::from(k.clone()))
-            .map(String::from.clone());
+            .map(String::from);
     }
 }
 impl Vector {
     pub fn contains_bool(&self, x: bool) -> bool {
-        return self.contains(&crate::kalai::kalai::BValue::from(x.clone()));
+        return self
+            .clone()
+            .contains(&crate::kalai::kalai::BValue::from(x.clone()));
     }
     pub fn contains_i8(&self, x: i8) -> bool {
-        return self.contains(&crate::kalai::kalai::BValue::from(x.clone()));
+        return self
+            .clone()
+            .contains(&crate::kalai::kalai::BValue::from(x.clone()));
     }
     pub fn contains_char(&self, x: char) -> bool {
-        return self.contains(&crate::kalai::kalai::BValue::from(x.clone()));
+        return self
+            .clone()
+            .contains(&crate::kalai::kalai::BValue::from(x.clone()));
     }
     pub fn contains_i32(&self, x: i32) -> bool {
-        return self.contains(&crate::kalai::kalai::BValue::from(x.clone()));
+        return self
+            .clone()
+            .contains(&crate::kalai::kalai::BValue::from(x.clone()));
     }
     pub fn contains_i64(&self, x: i64) -> bool {
-        return self.contains(&crate::kalai::kalai::BValue::from(x.clone()));
+        return self
+            .clone()
+            .contains(&crate::kalai::kalai::BValue::from(x.clone()));
     }
     pub fn contains_f32(&self, x: f32) -> bool {
-        return self.contains(&crate::kalai::kalai::BValue::from(x.clone()));
+        return self
+            .clone()
+            .contains(&crate::kalai::kalai::BValue::from(x.clone()));
     }
     pub fn contains_f64(&self, x: f64) -> bool {
-        return self.contains(&crate::kalai::kalai::BValue::from(x.clone()));
+        return self
+            .clone()
+            .contains(&crate::kalai::kalai::BValue::from(x.clone()));
     }
     pub fn contains_string(&self, x: String) -> bool {
-        return self.contains(&crate::kalai::kalai::BValue::from(x.clone()));
+        return self
+            .clone()
+            .contains(&crate::kalai::kalai::BValue::from(x.clone()));
     }
 }

@@ -1,9 +1,11 @@
+use rpds;
 use std::borrow::{Borrow, Cow};
 use std::collections::hash_map::DefaultHasher;
 use std::collections::HashSet;
 use std::collections::{BinaryHeap, HashMap};
 use std::convert::TryInto;
-use std::fmt::Debug;
+use std::error::Error;
+use std::fmt::{Debug, Display, Formatter};
 use std::hash::{BuildHasher, Hash, Hasher};
 use std::iter::FromIterator;
 use std::ops::{Add, Deref};
@@ -11,7 +13,6 @@ use std::slice::Iter;
 use std::vec::Vec;
 use std::{any, any::Any};
 use std::{fmt, ops};
-use rpds;
 
 /// Because we want to insert values that implement the Value trait (in order to
 /// be added to collection types in an extensible way that is accessible to users),
@@ -132,6 +133,12 @@ impl PartialEq for dyn Value {
 }
 
 impl Eq for dyn Value {}
+
+impl Display for dyn Value {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        <Value as Debug>::fmt(self, f)
+    }
+}
 
 // TODO: we should investigate whether it is better to implement Copy instead
 // of Clone, and which to be more choosy in implementing for the Value trait
