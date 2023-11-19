@@ -5,35 +5,36 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 import kalai.Kalai;
+import kalai.Kalai.*;
 public class Core {
-public static final TYPE_MISSING diffAssociativeKey(final TYPE_MISSING a, final TYPE_MISSING b, final TYPE_MISSING k) {
-final Object va = a.get(k);
-final Object vb = b.get(k);
-final Object vec18735 = diff(va, vb);
+public static final Object diffAssociativeKey(final Object a, final Object b, final Object k) {
+final Object va = kalai.Kalai.get(a, k);
+final Object vb = kalai.Kalai.get(b, k);
+final Object vec18730 = diff(va, vb);
 Object tmp43 = null;
 if ((0L <= 0L))
 {
-if ((0L < vec__18735.length()))
+if ((0L < vec__18730.length()))
 {
-tmp43 = vec__18735.get();
+tmp43 = vec__18730.get();
 }
 }
 final Object aa = tmp43;
 Object tmp44 = null;
 if ((0L <= 1L))
 {
-if ((1L < vec__18735.length()))
+if ((1L < vec__18730.length()))
 {
-tmp44 = vec__18735.get();
+tmp44 = vec__18730.get();
 }
 }
 final Object bb = tmp44;
 Object tmp45 = null;
 if ((0L <= 2L))
 {
-if ((2L < vec__18735.length()))
+if ((2L < vec__18730.length()))
 {
-tmp45 = vec__18735.get();
+tmp45 = vec__18730.get();
 }
 }
 final Object ab = tmp45;
@@ -50,7 +51,7 @@ tmp1 = or__5581__auto__;
 else
 {
 final boolean and5579Auto = (va == null);
-"MISSING_TYPE" tmp3;
+Object tmp3;
 boolean tmp4 = and__5579__auto__;
 if (tmp4)
 {
@@ -158,20 +159,20 @@ tmp21 = (Object)new io.lacuna.bifurcan.Map<Object,Object>().put(k, ab, io.lacuna
 }
 return (Object)new io.lacuna.bifurcan.List<Object>().addLast(tmp13).addLast(tmp17).addLast(tmp21);
 }
-public static final TYPE_MISSING merge2(final TYPE_MISSING m1, final TYPE_MISSING m2) {
+public static final Object merge2(final Object m1, final Object m2) {
 return kalai.Kalai.foldLeft(m2.stream(), m1, conj);
 }
-public static final TYPE_MISSING mergeDiffs(final Object diff1, final Object diff2) {
+public static final Object mergeDiffs(final Object diff1, final Object diff2) {
 return (Object)vec(kalai.Kalai.map((a, b) -> {
 return merge2(a, b);
 }, diff1.stream(), diff2.stream()));
 }
-public static final TYPE_MISSING diffAssociative(final TYPE_MISSING a, final TYPE_MISSING b, final TYPE_MISSING ks) {
+public static final Object diffAssociative(final Object a, final Object b, final Object ks) {
 return kalai.Kalai.foldLeft(ks.stream().map((k) -> {
 return diffAssociativeKey(a, b, k);
 }), (Object)new io.lacuna.bifurcan.List<Object>().addLast(null).addLast(null).addLast(null), mergeDiffs);
 }
-public static final TYPE_MISSING union(final TYPE_MISSING s1, final TYPE_MISSING s2) {
+public static final Object union(final Object s1, final Object s2) {
 boolean tmp23 = (s1.length() < s2.length());
 if (tmp23)
 {
@@ -182,7 +183,7 @@ else
 return kalai.Kalai.foldLeft(s2.stream(), s1, conj);
 }
 }
-public static final TYPE_MISSING difference(final TYPE_MISSING s1, final TYPE_MISSING s2) {
+public static final Object difference(final Object s1, final Object s2) {
 boolean tmp24 = (s1.length() < s2.length());
 if (tmp24)
 {
@@ -203,7 +204,7 @@ else
 return kalai.Kalai.foldLeft(s2.stream(), s1, disj);
 }
 }
-public static final TYPE_MISSING intersection(final TYPE_MISSING s1, final TYPE_MISSING s2) {
+public static final Object intersection(final Object s1, final Object s2) {
 boolean tmp26 = (s2.length() < s1.length());
 if (tmp26)
 {
@@ -224,7 +225,7 @@ return disj(result, item);
 });
 }
 }
-public static final TYPE_MISSING atomDiff(final TYPE_MISSING a, final TYPE_MISSING b) {
+public static final Object atomDiff(final Object a, final Object b) {
 boolean tmp28 = (a == b);
 if (tmp28)
 {
@@ -235,7 +236,7 @@ else
 return (Object)new io.lacuna.bifurcan.List<Object>().addLast(a).addLast(b).addLast(null);
 }
 }
-public static final String equalityPartition(final TYPE_MISSING x) {
+public static final String equalityPartition(final Object x) {
 boolean tmp29 = (x instanceof Set);
 if (tmp29)
 {
@@ -262,31 +263,31 @@ return ":atom";
 }
 }
 }
-public static final TYPE_MISSING mapDiff(final TYPE_MISSING a, final TYPE_MISSING b) {
+public static final Object mapDiff(final Object a, final Object b) {
 final Object abKeys = union(keys(a), keys(b));
 return diffAssociative(a, b, abKeys);
 }
-public static final TYPE_MISSING setDiff(final TYPE_MISSING a, final TYPE_MISSING b) {
+public static final Object setDiff(final Object a, final Object b) {
 return (Object)new io.lacuna.bifurcan.List<Object>().addLast(difference(a, b)).addLast(difference(b, a)).addLast(intersection(a, b));
 }
-public static final TYPE_MISSING vectorize(final TYPE_MISSING m) {
+public static final Object vectorize(final Object m) {
 boolean tmp32 = notEmpty(m);
 if (tmp32)
 {
 Object tmp46 = null;
 if ((0L <= 0L))
 {
-if ((0L < vec__18779.length()))
+if ((0L < vec__18774.length()))
 {
-tmp46 = vec__18779.get();
+tmp46 = vec__18774.get();
 }
 }
 Object tmp47 = null;
 if ((0L <= 1L))
 {
-if ((1L < vec__18779.length()))
+if ((1L < vec__18774.length()))
 {
-tmp47 = vec__18779.get();
+tmp47 = vec__18774.get();
 }
 }
 {
@@ -294,8 +295,8 @@ return kalai.Kalai.foldLeft(m.stream(), (Object)vec(repeat((long)kalai.Kalai.fol
 final long aInt = (long)a;
 final long bInt = (long)b;
 return (Object)clojure.lang.Numbers.max(aInt, bInt);
-}), null)), (result, p__18777) -> {
-final TYPE_MISSING vec18779 = p__18777;
+}), null)), (result, p__18772) -> {
+final Object vec18774 = p__18772;
 final Object k = tmp46;
 final Object v = tmp47;
 return result.put(k, v);
@@ -307,8 +308,8 @@ else
 return null;
 }
 }
-public static final TYPE_MISSING sequenceDiff(final TYPE_MISSING a, final TYPE_MISSING b) {
-"MISSING_TYPE" tmp33;
+public static final Object sequenceDiff(final Object a, final Object b) {
+Object tmp33;
 boolean tmp34 = (a instanceof List);
 if (tmp34)
 {
@@ -318,7 +319,7 @@ else
 {
 tmp33 = (Object)vec(a.stream());
 }
-"MISSING_TYPE" tmp35;
+Object tmp35;
 boolean tmp36 = (b instanceof List);
 if (tmp36)
 {
@@ -332,7 +333,7 @@ return (Object)vec(diffAssociative(tmp33, tmp35, (Object)vec(range(clojure.lang.
 return vectorize(a);
 }));
 }
-public static final TYPE_MISSING diffSimilar(final TYPE_MISSING a, final TYPE_MISSING b) {
+public static final Object diffSimilar(final Object a, final Object b) {
 final String partitionA = equalityPartition(a);
 final String partitionB = equalityPartition(b);
 {
@@ -379,7 +380,7 @@ return atomDiff(a, b);
 }
 }
 }
-public static final TYPE_MISSING diff(final Object a, final Object b) {
+public static final Object diff(final Object a, final Object b) {
 boolean tmp42 = (a == b);
 if (tmp42)
 {

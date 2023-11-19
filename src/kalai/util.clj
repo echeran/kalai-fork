@@ -34,9 +34,6 @@ creating a temporary mutable variable.
   [type expr]
   (with-meta (gensym2 "tmp") {:t type :expr expr :mut true}))
 
-(defn tmp-for [expr]
-  (tmp (types/get-type expr) expr))
-
 (defn match-t?
   "Match the value for `t` in the :t key in the metadata map of `x`"
   [t x]

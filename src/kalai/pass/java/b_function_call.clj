@@ -119,11 +119,11 @@
 
       ;; default case for .get(key) with no default value
       (j/invoke clojure.lang.RT/get ?x ?k)
-      (j/method get ?x ?k)
+      (j/invoke kalai.Kalai.get ?x ?k)
 
       ;; TODO: this only works on Maps, is there an equivalent for Lists (vectors) and Sets?
       (j/invoke clojure.lang.RT/get ?x ?k ?default)
-      (j/method getOrDefault ?x ?k ?default)
+      (j/invoke kalai.Kalai.get ?x ?k ?default)
 
       (j/invoke (u/var ~#'contains?) ?coll ?x)
       (j/method containsKey ?coll ?x)

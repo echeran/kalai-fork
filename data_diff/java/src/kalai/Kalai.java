@@ -159,4 +159,16 @@ public class Kalai {
     public static boolean notEmpty(java.util.Collection coll) {
         return !empty(coll);
     }
+
+    public static Object get(Object coll, Object k) {
+        return get(coll, k, null);
+    }
+
+    public static Object get(Object coll, Object k, Object defaultVal) {
+        if (coll instanceof io.lacuna.bifurcan.Map) {
+            return ((io.lacuna.bifurcan.Map) coll).get(k, defaultVal);
+        } else {
+            return null;
+        }
+    }
 }

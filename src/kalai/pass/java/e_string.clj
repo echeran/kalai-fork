@@ -69,7 +69,7 @@
   (or (get kalai-type->java t)
       ;; TODO: breaking the rules for interop... is this a bad idea?
       (when t (pr-str t))
-      "TYPE_MISSING"))
+      "Object"))
 
 (defn box [s]
   (case s
@@ -103,16 +103,9 @@
   (when file
     (str (.getName (io/file file)) ":" line ":" column)))
 
-(defn maybe-warn-type-missing [t x]
-  (when (str/includes? t "TYPE_MISSING")
-    (binding [*print-meta* true]
-      (println "WARNING: missing type detected" x
-               (where (meta (:expr (meta x))))))))
-
 (defn type-str [variable-name]
   (let [{:keys [t mut global]} (meta variable-name)]
     (-> (t-str t)
-        (doto (maybe-warn-type-missing variable-name))
         (type-modifiers mut global))))
 
 (defn typed-param [param]
@@ -171,7 +164,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
-import kalai.Kalai;")
+import kalai.Kalai;
+import kalai.Kalai.*;")
 
 (defn class-str [ns-name body]
   (let [parts (str/split (str ns-name) #"\.")
@@ -234,8 +228,7 @@ import kalai.Kalai;")
   (space-separated
     "new" (str (if (symbol? class-name)
                  class-name
-                 (doto (t-str class-name)
-                   (maybe-warn-type-missing class-name)))
+                 (t-str class-name))
                (args-list args))))
 
 (defn cast-str [v t]

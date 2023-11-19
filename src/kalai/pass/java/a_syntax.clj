@@ -1,5 +1,6 @@
 (ns kalai.pass.java.a-syntax
   (:require [kalai.util :as u]
+            [kalai.pass.java.util :as ju]
             [meander.strategy.epsilon :as s]
             [meander.epsilon :as m]))
 
@@ -191,7 +192,7 @@
     ;; when a conditional appears as an expression, we need a tmp variable,
     ;; so we create a group.
     (m/and (if ?test ?then)
-           (m/let [?tmp (u/tmp-for ?then)
+           (m/let [?tmp (ju/tmp-for ?then)
                    ?result (u/tmp :bool ?test)]))
     (group
       (j/init (m/app u/maybe-meta-assoc ?tmp :mut true))
@@ -201,7 +202,7 @@
       ?tmp)
 
     (m/and (if ?test ?then ?else)
-           (m/let [?tmp (u/tmp-for ?then)
+           (m/let [?tmp (ju/tmp-for ?then)
                    ?result (u/tmp :bool ?test)]))
     (group
       (j/init (m/app u/maybe-meta-assoc ?tmp :mut true))

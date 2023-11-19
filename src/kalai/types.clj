@@ -80,7 +80,9 @@
 
     ?else ~(throw (ex-info (str "Invalid Kalai type: " ?else ", T: " (type ?else)) {}))))
 
-(defn get-kalai-type-from-java-type [tag]
+(defn get-kalai-type-from-java-type
+  "Return the Kalai type representation for the tag (Java class)"
+  [tag]
   (or (get java-types tag)
       (throw (ex-info (str "Kalai does not recognize Java type hint " tag " of type " (type tag)) {:tag tag}))))
 
@@ -98,26 +100,6 @@
   (or (:t x)
       (throw (ex-info (str "Missed type annotation at " (source-location x))
                       {:meta (meta x)}))))
-
-;; TODO: can we delete this now?
-;; TODO: simplify this
-(defn get-type [expr]
-  (if (instance? IMeta expr)
-    (let [{:keys [t]} (meta expr)]
-      (or t
-          (when (and (seq? expr) (seq expr))
-            (case (first expr)
-              ;; TODO: this suggests we need some type inference
-              (j/new) (second expr)
-              (j/block j/invoke do if) (get-type (last expr))
-              (do
-                (println "WARNING: missing type for" (pr-str expr))
-                "MISSING_TYPE")))
-          (when (not (symbol? expr))
-            (type expr))
-          (do (println "WARNING: missing type for" (pr-str expr))
-              "MISSING_TYPE")))
-    (get-kalai-type-from-java-type (type expr))))
 
 (def lang-type-mappings
   {:kalai.emit.langs/rust {java.lang.StringBuffer '{:mvector [:char]}}})
