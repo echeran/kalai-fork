@@ -10,38 +10,38 @@ public class Core {
 public static final Object diffAssociativeKey(final Object a, final Object b, final Object k) {
 final Object va = kalai.Kalai.get(a, k);
 final Object vb = kalai.Kalai.get(b, k);
-final Object vec18730 = diff(va, vb);
+final Object vec__18727 = diff(va, vb);
 Object tmp43 = null;
 if ((0L <= 0L))
 {
-if ((0L < vec__18730.length()))
+if ((0L < vec__18727.length()))
 {
-tmp43 = vec__18730.get();
+tmp43 = vec__18727.get();
 }
 }
 final Object aa = tmp43;
 Object tmp44 = null;
 if ((0L <= 1L))
 {
-if ((1L < vec__18730.length()))
+if ((1L < vec__18727.length()))
 {
-tmp44 = vec__18730.get();
+tmp44 = vec__18727.get();
 }
 }
 final Object bb = tmp44;
 Object tmp45 = null;
 if ((0L <= 2L))
 {
-if ((2L < vec__18730.length()))
+if ((2L < vec__18727.length()))
 {
-tmp45 = vec__18730.get();
+tmp45 = vec__18727.get();
 }
 }
 final Object ab = tmp45;
 final boolean inA = a.containsKey(k);
 final boolean inB = b.containsKey(k);
 final boolean d = !(ab == null);
-final boolean or5581Auto = d;
+final boolean or__5581__auto__ = d;
 boolean tmp1;
 boolean tmp2 = or__5581__auto__;
 if (tmp2)
@@ -50,7 +50,7 @@ tmp1 = or__5581__auto__;
 }
 else
 {
-final boolean and5579Auto = (va == null);
+final boolean and__5579__auto__ = (va == null);
 Object tmp3;
 boolean tmp4 = and__5579__auto__;
 if (tmp4)
@@ -66,12 +66,12 @@ tmp1 = tmp3;
 }
 }
 final boolean c = tmp1;
-final boolean and5579Auto = inA;
+final boolean and__5579__auto__ = inA;
 boolean tmp5;
 boolean tmp6 = and__5579__auto__;
 if (tmp6)
 {
-final boolean and5579Auto = inB;
+final boolean and__5579__auto__ = inB;
 boolean tmp7;
 boolean tmp8 = and__5579__auto__;
 if (tmp8)
@@ -93,7 +93,7 @@ tmp5 = and__5579__auto__;
 final boolean same = tmp5;
 final boolean e = !(aa == null);
 final boolean f = !(bb == null);
-final boolean or5581Auto = e;
+final boolean or__5581__auto__ = e;
 boolean tmp9;
 boolean tmp10 = or__5581__auto__;
 if (tmp10)
@@ -105,7 +105,7 @@ else
 tmp9 = !same;
 }
 final boolean g = tmp9;
-final boolean or5581Auto = f;
+final boolean or__5581__auto__ = f;
 boolean tmp11;
 boolean tmp12 = or__5581__auto__;
 if (tmp12)
@@ -118,7 +118,7 @@ tmp11 = !same;
 }
 final boolean h = tmp11;
 io.lacuna.bifurcan.Map<Object,Object> tmp13;
-final boolean and5579Auto = inA;
+final boolean and__5579__auto__ = inA;
 boolean tmp15;
 boolean tmp16 = and__5579__auto__;
 if (tmp16)
@@ -135,7 +135,7 @@ if (tmp14)
 tmp13 = (Object)new io.lacuna.bifurcan.Map<Object,Object>().put(k, aa, io.lacuna.bifurcan.Maps.MERGE_LAST_WRITE_WINS);
 }
 io.lacuna.bifurcan.Map<Object,Object> tmp17;
-final boolean and5579Auto = inB;
+final boolean and__5579__auto__ = inB;
 boolean tmp19;
 boolean tmp20 = and__5579__auto__;
 if (tmp20)
@@ -277,17 +277,17 @@ if (tmp32)
 Object tmp46 = null;
 if ((0L <= 0L))
 {
-if ((0L < vec__18774.length()))
+if ((0L < vec__18771.length()))
 {
-tmp46 = vec__18774.get();
+tmp46 = vec__18771.get();
 }
 }
 Object tmp47 = null;
 if ((0L <= 1L))
 {
-if ((1L < vec__18774.length()))
+if ((1L < vec__18771.length()))
 {
-tmp47 = vec__18774.get();
+tmp47 = vec__18771.get();
 }
 }
 {
@@ -295,8 +295,8 @@ return kalai.Kalai.foldLeft(m.stream(), (Object)vec(repeat((long)kalai.Kalai.fol
 final long aInt = (long)a;
 final long bInt = (long)b;
 return (Object)clojure.lang.Numbers.max(aInt, bInt);
-}), null)), (result, p__18772) -> {
-final Object vec18774 = p__18772;
+}), null)), (result, p__18769) -> {
+final Object vec__18771 = p__18769;
 final Object k = tmp46;
 final Object v = tmp47;
 return result.put(k, v);

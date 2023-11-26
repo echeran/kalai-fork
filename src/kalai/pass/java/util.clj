@@ -5,6 +5,14 @@
             [kalai.types :as t])
   (:import (clojure.lang IMeta)))
 
+(defn java-case
+  "Return the identifier back as the same type it is provided as (string, symbol)
+  using lowercase camelcase"
+  [identifier]
+  (if (str/includes? (str identifier) "-")
+    (csk/->camelCase identifier)
+    identifier))
+
 (defn fully-qualified-function-identifier-str [function-name class-function-separator]
   (if (string? function-name)
     function-name
@@ -25,11 +33,8 @@
               function-name (csk/->camelCase (str (:name varmeta)))]
           (str full-classname class-function-separator function-name))
 
-        (str/includes? function-name "-")
-        (csk/->camelCase function-name)
-
         :else
-        function-name))))
+        (java-case function-name)))))
 
 ;; TODO: simplify this
 (defn get-type

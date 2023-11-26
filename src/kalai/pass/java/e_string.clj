@@ -110,7 +110,7 @@
 
 (defn typed-param [param]
   (space-separated (type-str param)
-                   (csk/->camelCase param)))
+                   (ju/java-case param)))
 
 (defn params-list [params]
   (parens (apply comma-separated
@@ -146,7 +146,7 @@
     (str
       (space-separated 'public 'static
                        (type-str params)
-                       (csk/->camelCase name))
+                       (ju/java-case name))
       (space-separated (params-list params)
                        (stringify body)))))
 
@@ -289,10 +289,8 @@ import kalai.Kalai.*;")
     "null"
 
     ;; identifier
-    (m/pred #(and (symbol? %)
-                  (str/includes? (str %) "-"))
-            ?s)
-    (csk/->camelCase (str ?s))
+    (m/pred symbol? ?s)
+    (ju/java-case (str ?s))
 
     ?else
     (pr-str ?else)))
