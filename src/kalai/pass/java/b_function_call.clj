@@ -88,29 +88,6 @@
       (j/invoke clojure.lang.RT/count ?x)
       (j/method (m/app count-for ?x) ?x)
 
-      ;; TODO: need to do different stuff depending on the type
-      (j/invoke clojure.lang.RT/nth ?x ?n)
-      (j/method (m/app nth-for ?x) ?x ?n)
-
-      (m/and
-        (j/invoke clojure.lang.RT/nth ?x ?n ?not-found)
-        ;; Note: not using `u/tmp-for` because we don't want to create a type
-        ;; for the temporary variable because the type will be a Rust `Some<T>`
-        ;; type, which as a Rust-specific type, we cannot/do not want to express in Kalai.
-        ;; TODO (if needed): use the collection (?x)'s element type instead of hard-coding
-        ;; `:any` as the type of the temp/result variable. This could be done for collections
-        ;; (and check for the special case of strings, where elem is a char), but for a sequence,
-        ;; (in Java, a Stream), we only annotate them internally and never expose to the user,
-        ;; and in those cases the `:seqeunce:` type would need to more precisely specify the
-        ;; element type of the sequence.
-        (m/let [?result (u/tmp :any ?not-found)]))
-      (group
-        (j/init ?result ?not-found)
-        (j/if (j/operator <= 0 ?n)
-          (j/if (j/operator < ?n (j/method (m/app count-for ?x) ?x))
-            (j/block (j/assign ?result (j/method (m/app nth-for ?x) ?x)))))
-        ?result)
-
       ;; special case how persistent maps (via Bifurcan) do .get(key) so that we _don't_ return an Optional<value>
       (j/invoke clojure.lang.RT/get
                 (m/and ?x (m/pred (comp :map :t meta)))
@@ -260,17 +237,6 @@
 
       (j/invoke (u/var ~#'str) & ?args)
       (j/operator + "" & ?args)
-
-      ;; Keep this below any match by symbol rules!
-      (j/invoke (m/and (m/pred symbol?)
-                       (m/pred #(not (:var (meta %))))
-                       (m/pred #(str/includes? (str %) "/"))
-                       ?static-function)
-                & ?more)
-      (j/invoke ~(-> (str ?static-function)
-                     (str/replace "/" ".")
-                     (symbol))
-                & ?more)
 
       ?else
       ?else)))

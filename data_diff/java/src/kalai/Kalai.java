@@ -171,4 +171,17 @@ public class Kalai {
             return null;
         }
     }
+
+    public static Object nth(Object coll, Object n) {
+        return nth(coll, n, null);
+    }
+
+    public static Object nth(Object coll, Object n, Object defaultVal) {
+        if (coll instanceof io.lacuna.bifurcan.IList) {
+            long nLong = (long) n;
+            return ((io.lacuna.bifurcan.IList) coll).nth(nLong);
+        } else {
+            return defaultVal;
+        }
+    }
 }

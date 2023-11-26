@@ -130,7 +130,7 @@
                    {:form args}))))
 
 (defn invoke-str [function-name & args]
-  (str (if (symbol? function-name)
+  (str (if (or (string? function-name) (symbol? function-name))
          (ju/fully-qualified-function-identifier-str function-name ".")
          (stringify function-name))
        (args-list args)))
