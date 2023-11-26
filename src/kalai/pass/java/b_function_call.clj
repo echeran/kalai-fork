@@ -88,20 +88,6 @@
       (j/invoke clojure.lang.RT/count ?x)
       (j/method (m/app count-for ?x) ?x)
 
-      ;; special case how persistent maps (via Bifurcan) do .get(key) so that we _don't_ return an Optional<value>
-      (j/invoke clojure.lang.RT/get
-                (m/and ?x (m/pred (comp :map :t meta)))
-                ?k)
-      (j/method get ?x ?k nil)
-
-      ;; default case for .get(key) with no default value
-      (j/invoke clojure.lang.RT/get ?x ?k)
-      (j/invoke kalai.Kalai.get ?x ?k)
-
-      ;; TODO: this only works on Maps, is there an equivalent for Lists (vectors) and Sets?
-      (j/invoke clojure.lang.RT/get ?x ?k ?default)
-      (j/invoke kalai.Kalai.get ?x ?k ?default)
-
       (j/invoke (u/var ~#'contains?) ?coll ?x)
       (j/method containsKey ?coll ?x)
 

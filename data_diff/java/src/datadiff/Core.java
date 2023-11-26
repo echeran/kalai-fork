@@ -10,34 +10,10 @@ public class Core {
 public static final Object diffAssociativeKey(final Object a, final Object b, final Object k) {
 final Object va = kalai.Kalai.get(a, k);
 final Object vb = kalai.Kalai.get(b, k);
-final Object vec__18727 = diff(va, vb);
-Object tmp43 = null;
-if ((0L <= 0L))
-{
-if ((0L < vec__18727.length()))
-{
-tmp43 = vec__18727.get();
-}
-}
-final Object aa = tmp43;
-Object tmp44 = null;
-if ((0L <= 1L))
-{
-if ((1L < vec__18727.length()))
-{
-tmp44 = vec__18727.get();
-}
-}
-final Object bb = tmp44;
-Object tmp45 = null;
-if ((0L <= 2L))
-{
-if ((2L < vec__18727.length()))
-{
-tmp45 = vec__18727.get();
-}
-}
-final Object ab = tmp45;
+final Object vec__18680 = diff(va, vb);
+final Object aa = kalai.Kalai.nth(vec__18680, 0L, null);
+final Object bb = kalai.Kalai.nth(vec__18680, 1L, null);
+final Object ab = kalai.Kalai.nth(vec__18680, 2L, null);
 final boolean inA = a.containsKey(k);
 final boolean inB = b.containsKey(k);
 final boolean d = !(ab == null);
@@ -274,34 +250,16 @@ public static final Object vectorize(final Object m) {
 boolean tmp32 = notEmpty(m);
 if (tmp32)
 {
-Object tmp46 = null;
-if ((0L <= 0L))
-{
-if ((0L < vec__18771.length()))
-{
-tmp46 = vec__18771.get();
-}
-}
-Object tmp47 = null;
-if ((0L <= 1L))
-{
-if ((1L < vec__18771.length()))
-{
-tmp47 = vec__18771.get();
-}
-}
-{
 return kalai.Kalai.foldLeft(m.stream(), (Object)vec(repeat((long)kalai.Kalai.foldLeft(keys(m).stream(), keys(m).stream().findFirst().get(), (a, b) -> {
 final long aInt = (long)a;
 final long bInt = (long)b;
-return (Object)clojure.lang.Numbers.max(aInt, bInt);
-}), null)), (result, p__18769) -> {
-final Object vec__18771 = p__18769;
-final Object k = tmp46;
-final Object v = tmp47;
+return (Object)clojure.lang.Numbers/max(aInt, bInt);
+}), null)), (result, p__18722) -> {
+final Object vec__18724 = p__18722;
+final Object k = kalai.Kalai.nth(vec__18724, 0L, null);
+final Object v = kalai.Kalai.nth(vec__18724, 1L, null);
 return result.put(k, v);
 });
-}
 }
 else
 {
@@ -329,7 +287,7 @@ else
 {
 tmp35 = (Object)vec(b.stream());
 }
-return (Object)vec(diffAssociative(tmp33, tmp35, (Object)vec(range(clojure.lang.Numbers.max(a.length(), b.length())))).stream().map((a) -> {
+return (Object)vec(diffAssociative(tmp33, tmp35, (Object)vec(range(clojure.lang.Numbers/max(a.length(), b.length())))).stream().map((a) -> {
 return vectorize(a);
 }));
 }
