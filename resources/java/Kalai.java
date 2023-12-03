@@ -184,4 +184,14 @@ public class Kalai {
             return defaultVal;
         }
     }
+
+    public static boolean contains(Object coll, Object k) {
+        if (coll instanceof io.lacuna.bifurcan.Map) {
+            return ((io.lacuna.bifurcan.Map) coll).contains(k);
+        } else if (coll instanceof java.util.Map) {
+            return ((java.util.Map) coll).containsKey(k);
+        } else {
+            return false;
+        }
+    }
 }

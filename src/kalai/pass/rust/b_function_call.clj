@@ -153,9 +153,6 @@
       ;;(r/invoke clojure.lang.RT/get ?x ?k ?default)
       ;;(r/method clone (r/method unwrap_or (r/method get ?x (r/ref ?k)) (r/ref ?default)))
 
-      (r/invoke (u/var ~#'contains?) ?coll ?x)
-      (r/invoke contains ?coll ?x)
-
       (r/invoke (u/var ~#'assoc)
                 (m/and ?coll
                        (m/app meta {:t {_ [?key-t ?value-t]}}))

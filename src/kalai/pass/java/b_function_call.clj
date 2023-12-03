@@ -88,9 +88,6 @@
       (j/invoke clojure.lang.RT/count ?x)
       (j/method (m/app count-for ?x) ?x)
 
-      (j/invoke (u/var ~#'contains?) ?coll ?x)
-      (j/method containsKey ?coll ?x)
-
       (j/operator ==
                   (m/and (m/or (m/pred string?) (m/app meta {:t :string})) ?x)
                   (m/and (m/or (m/pred string?) (m/app meta {:t :string})) ?y))

@@ -10,12 +10,12 @@ public class Core {
 public static final Object diffAssociativeKey(final Object a, final Object b, final Object k) {
 final Object va = kalai.Kalai.get(a, k);
 final Object vb = kalai.Kalai.get(b, k);
-final Object vec__18680 = diff(va, vb);
-final Object aa = kalai.Kalai.nth(vec__18680, 0L, null);
-final Object bb = kalai.Kalai.nth(vec__18680, 1L, null);
-final Object ab = kalai.Kalai.nth(vec__18680, 2L, null);
-final boolean inA = a.containsKey(k);
-final boolean inB = b.containsKey(k);
+final Object vec__18665 = diff(va, vb);
+final Object aa = kalai.Kalai.nth(vec__18665, 0L, null);
+final Object bb = kalai.Kalai.nth(vec__18665, 1L, null);
+final Object ab = kalai.Kalai.nth(vec__18665, 2L, null);
+final boolean inA = kalai.Kalai.contains(a, k);
+final boolean inB = kalai.Kalai.contains(b, k);
 final boolean d = !(ab == null);
 final boolean or__5581__auto__ = d;
 boolean tmp1;
@@ -139,7 +139,7 @@ public static final Object merge2(final Object m1, final Object m2) {
 return kalai.Kalai.foldLeft(m2.stream(), m1, conj);
 }
 public static final Object mergeDiffs(final Object diff1, final Object diff2) {
-return (Object)vec(kalai.Kalai.map((a, b) -> {
+return (Object)kalai.Kalai.vec(kalai.Kalai.map((a, b) -> {
 return merge2(a, b);
 }, diff1.stream(), diff2.stream()));
 }
@@ -164,10 +164,10 @@ boolean tmp24 = (s1.length() < s2.length());
 if (tmp24)
 {
 return kalai.Kalai.foldLeft(s1.stream(), s1, (result, item) -> {
-boolean tmp25 = s2.containsKey(item);
+boolean tmp25 = kalai.Kalai.contains(s2, item);
 if (tmp25)
 {
-return disj(result, item);
+return kalai.Kalai.disj(result, item);
 }
 else
 {
@@ -189,14 +189,14 @@ return intersection(s2, s1);
 else
 {
 return kalai.Kalai.foldLeft(s1.stream(), s1, (result, item) -> {
-boolean tmp27 = s2.containsKey(item);
+boolean tmp27 = kalai.Kalai.contains(s2, item);
 if (tmp27)
 {
 return result;
 }
 else
 {
-return disj(result, item);
+return kalai.Kalai.disj(result, item);
 }
 });
 }
@@ -240,24 +240,24 @@ return ":atom";
 }
 }
 public static final Object mapDiff(final Object a, final Object b) {
-final Object abKeys = union(keys(a), keys(b));
+final Object abKeys = union(kalai.Kalai.keys(a), kalai.Kalai.keys(b));
 return diffAssociative(a, b, abKeys);
 }
 public static final Object setDiff(final Object a, final Object b) {
 return (Object)new io.lacuna.bifurcan.List<Object>().addLast(difference(a, b)).addLast(difference(b, a)).addLast(intersection(a, b));
 }
 public static final Object vectorize(final Object m) {
-boolean tmp32 = notEmpty(m);
+boolean tmp32 = kalai.Kalai.notEmpty(m);
 if (tmp32)
 {
-return kalai.Kalai.foldLeft(m.stream(), (Object)vec(repeat((long)kalai.Kalai.foldLeft(keys(m).stream(), keys(m).stream().findFirst().get(), (a, b) -> {
+return kalai.Kalai.foldLeft(m.stream(), (Object)kalai.Kalai.vec(kalai.Kalai.repeat((long)kalai.Kalai.foldLeft(kalai.Kalai.keys(m).stream(), kalai.Kalai.keys(m).stream().findFirst().get(), (a, b) -> {
 final long aInt = (long)a;
 final long bInt = (long)b;
 return (Object)clojure.lang.Numbers/max(aInt, bInt);
-}), null)), (result, p__18722) -> {
-final Object vec__18724 = p__18722;
-final Object k = kalai.Kalai.nth(vec__18724, 0L, null);
-final Object v = kalai.Kalai.nth(vec__18724, 1L, null);
+}), null)), (result, p__18707) -> {
+final Object vec__18709 = p__18707;
+final Object k = kalai.Kalai.nth(vec__18709, 0L, null);
+final Object v = kalai.Kalai.nth(vec__18709, 1L, null);
 return result.put(k, v);
 });
 }
@@ -275,7 +275,7 @@ tmp33 = a;
 }
 else
 {
-tmp33 = (Object)vec(a.stream());
+tmp33 = (Object)kalai.Kalai.vec(a.stream());
 }
 Object tmp35;
 boolean tmp36 = (b instanceof List);
@@ -285,9 +285,9 @@ tmp35 = b;
 }
 else
 {
-tmp35 = (Object)vec(b.stream());
+tmp35 = (Object)kalai.Kalai.vec(b.stream());
 }
-return (Object)vec(diffAssociative(tmp33, tmp35, (Object)vec(range(clojure.lang.Numbers/max(a.length(), b.length())))).stream().map((a) -> {
+return (Object)kalai.Kalai.vec(diffAssociative(tmp33, tmp35, (Object)kalai.Kalai.vec(kalai.Kalai.range(clojure.lang.Numbers/max(a.length(), b.length())))).stream().map((a) -> {
 return vectorize(a);
 }));
 }

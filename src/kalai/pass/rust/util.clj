@@ -35,12 +35,14 @@
   [s]
   (let [s-str (str s)
         id-first-char (first s-str)]
-    (if (Character/isUpperCase ^char id-first-char)
-      s-str
-      (let [snake-case (u/->snake_case s-str)]
-        (if (= \_ (first s-str))
-          (str \_ snake-case)
-          snake-case)))))
+    (-> (if (Character/isUpperCase ^char id-first-char)
+          s-str
+          (let [snake-case (u/->snake_case s-str)]
+            (if (= \_ (first s-str))
+              (str \_ snake-case)
+              snake-case)))
+
+        (str/replace "?" ""))))
 
 (defn fully-qualified-function-identifier-str
   "Take a fully qualified Clojure var representing a function (`function-name`) and convert it
@@ -57,8 +59,9 @@
           name-of-ns (namespace function-name)]
       (cond
 
-        (= "clojure.lang.RT" name-of-ns)
-        (str "kalai::" (name function-name))
+        (or (= "clojure.lang.RT" name-of-ns)
+            (= 'clojure.core (some-> varmeta :ns ns-name)))
+        (str "kalai::" (identifier (name function-name)))
 
         ;; If the function being transpiled is either from Kalai or the user, we assume it has a namespace.
         ;; We need to handle the Rust snake-casing segment-by-segment when applying `identifier`.
