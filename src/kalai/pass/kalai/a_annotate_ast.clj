@@ -148,9 +148,11 @@
   "If possible, associate the representative type of `symbol-bind-site` or `from-ast` to `symbol-call-site`,
   otherwise, just return `symbol-call-site` exactly as-is.
   Return `symbol-call-site` as-is if:
-    * `symbol-call-site` cannot take metadata
+    * `symbol-call-site` does not/cannot take metadata
     * `symbol-call-site` already has type info, as inferred by truthy value for `:t` in
-    metadata"
+    metadata
+
+  See the rule in propagate-types-from-bindings-to-locals for definitions of the args to this fn"
   [from-ast symbol-bind-site symbol-call-site ast]
   (if (and (instance? IMeta symbol-call-site)
            (not (t-from-meta symbol-call-site)))
@@ -190,7 +192,8 @@
 ;; vs {1 (inc 1)}   <- map
 ;; EXCEPT when working with files!!???!!!
 (defn set-ast-t
-  "We match against both the collection and the type because maps must have
+  "Helper function to set the `:t` in the ast, when given the ast and `:t` value.
+  Note: We match against both the collection and the type because maps must have
   a valid map type and we need the key value sub-types."
   [ast t]
   (m/rewrite [ast t]
@@ -340,13 +343,23 @@
              & ?body)
      &     ?more}
 
+    ;; any expression that has metadata on it
+    ;; (if it has metadata that, for example, has a :tag key but not yet a :t key in metadata)
+    ;; TODO: see if the match constraint needs to be narrower
+    {:form ?form
+     &     ?more
+     :as   ?ast}
+    ;; ->
+    {:form ~(u/maybe-meta-assoc ?form :t (resolve-t ?form ?ast))
+     &     ?more}
+
     ;; otherwise leave the ast as is
     ?else
     ?else))
 
 (def propagate-types-from-bindings-to-locals
   "We propagate type information which is stored in metadata
-  from the the place where they are declared on a symbol
+  from the place where they are declared on a symbol
   to all future usages of that symbol in scope."
   ;; TODO: function call type inference would be nice
   (s/rewrite

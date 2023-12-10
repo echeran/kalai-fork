@@ -52,6 +52,10 @@ contains?
   "Return the Kalai type representation for the expression"
   [expr]
   (if (instance? IMeta expr)
+    ;; We expect that the upstream "kalai" non-target language specific pipeline
+    ;; will have already normalized the type information into the `:t` key of metadata,
+    ;; by copying over and translating type hints from `:tag` or `:type` into the
+    ;; equivalent Kalai type keywords. Therefore, only look at `:t`.
     (let [{:keys [t]} (meta expr)]
       (or t
           (when (and (seq? expr) (seq expr))

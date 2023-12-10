@@ -1578,3 +1578,40 @@ tmp1.putAll(tmp2);"))
            ^{:t {:map [:string :long]}} {:b 2})
     '(invoke conj {:a 1} {:b 2})
     "kalai.Kalai.conj(new io.lacuna.bifurcan.Map<String,Long>().put(\":a\", 1L, io.lacuna.bifurcan.Maps.MERGE_LAST_WRITE_WINS), new io.lacuna.bifurcan.Map<String,Long>().put(\":b\", 2L, io.lacuna.bifurcan.Maps.MERGE_LAST_WRITE_WINS));"))
+
+(deftest and-test
+  (inner-form
+    '(let [^{:t :bool} d ^boolean (and ^boolean (nil? false)
+                           ^boolean (nil? true))]
+       d)
+    '(do
+       (init
+         d
+         (do
+           (init
+             and__5579__auto__
+             (invoke
+               clojure.lang.Util/identical
+               false
+               nil))
+           (if
+             and__5579__auto__
+             (invoke
+               clojure.lang.Util/identical
+               true
+               nil)
+             and__5579__auto__)))
+       d)
+    "public static final void testFunction() {
+final boolean and__5579__auto__ = (false == null);
+boolean tmp1;
+boolean tmp2 = and__5579__auto__;
+if (tmp2)
+{
+tmp1 = (true == null);
+}
+else
+{
+tmp1 = and__5579__auto__;
+}
+final boolean d = tmp1;"))
