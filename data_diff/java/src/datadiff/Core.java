@@ -10,10 +10,10 @@ public class Core {
 public static final Object diffAssociativeKey(final Object a, final Object b, final Object k) {
 final Object va = kalai.Kalai.get(a, k);
 final Object vb = kalai.Kalai.get(b, k);
-final Object vec__18665 = diff(va, vb);
-final Object aa = kalai.Kalai.nth(vec__18665, 0L, null);
-final Object bb = kalai.Kalai.nth(vec__18665, 1L, null);
-final Object ab = kalai.Kalai.nth(vec__18665, 2L, null);
+final Object vec__18671 = diff(va, vb);
+final Object aa = kalai.Kalai.nth(vec__18671, 0L, null);
+final Object bb = kalai.Kalai.nth(vec__18671, 1L, null);
+final Object ab = kalai.Kalai.nth(vec__18671, 2L, null);
 final boolean inA = kalai.Kalai.contains(a, k);
 final boolean inB = kalai.Kalai.contains(b, k);
 final boolean d = !(ab == null);
@@ -27,7 +27,7 @@ tmp1 = or__5581__auto__;
 else
 {
 final boolean and__5579__auto__ = (va == null);
-Object tmp3;
+boolean tmp3;
 boolean tmp4 = and__5579__auto__;
 if (tmp4)
 {
@@ -254,10 +254,10 @@ return kalai.Kalai.foldLeft(m.stream(), (Object)kalai.Kalai.vec(kalai.Kalai.repe
 final long aInt = (long)a;
 final long bInt = (long)b;
 return (Object)clojure.lang.Numbers/max(aInt, bInt);
-}), null)), (result, p__18707) -> {
-final Object vec__18709 = p__18707;
-final Object k = kalai.Kalai.nth(vec__18709, 0L, null);
-final Object v = kalai.Kalai.nth(vec__18709, 1L, null);
+}), null)), (result, p__18713) -> {
+final Object vec__18715 = p__18713;
+final Object k = kalai.Kalai.nth(vec__18715, 0L, null);
+final Object v = kalai.Kalai.nth(vec__18715, 1L, null);
 return result.put(k, v);
 });
 }

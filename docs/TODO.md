@@ -3,6 +3,7 @@
 * data.diff
   - implement
   - port of fipp for pretty-printing
+  - figure out why {... :t :any} was required for `reduce` in `data-diff.core/vectorize` (the reduce s-expression was being annotated to have a `:long` return type even though the funtcion passed in returns `:any`)
 
 * Persistent data structures
   - all languages have a library, but not everyone wants the dependency

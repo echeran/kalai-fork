@@ -119,12 +119,12 @@
     (reduce
       (fn [result [k v]] (assoc result k v))
       ^{:cast :any}
-      (vec (repeat ^{:cast :long} (reduce (fn [a b]
-                             (let [a-int ^{:cast :long} a
-                                   b-int ^{:cast :long} b]
-                               ^{:cast :any} (max a-int b-int)))
-                           (first (seq (keys m)))
-                           (seq (keys m)))
+      (vec (repeat ^{:cast :long :t :any} (reduce (fn [a b]
+                                                    (let [a-int ^{:cast :long} a
+                                                          b-int ^{:cast :long} b]
+                                                      ^{:cast :any} (max a-int b-int)))
+                                                  (first (seq (keys m)))
+                                                  (seq (keys m)))
                    nil))
       (seq m))))
 
