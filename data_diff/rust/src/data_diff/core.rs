@@ -3,9 +3,9 @@ use crate::kalai::kalai::*;
 pub fn diff_associative_key(a: kalai::BValue, b: kalai::BValue, k: kalai::BValue) -> kalai::BValue {
     let va: kalai::BValue = kalai::get(a.clone(), k.clone());
     let vb: kalai::BValue = kalai::get(b.clone(), k.clone());
-    let vec_18671: kalai::BValue = diff(va.clone(), vb.clone());
+    let vec_18696: kalai::BValue = diff(va.clone(), vb.clone());
     let aa: kalai::BValue = {
-        let get1 = get(vec_18671.clone(), kalai::BValue::from(0i64));
+        let get1 = get(vec_18696.clone(), kalai::BValue::from(0i64));
         if get1.clone().is_some() {
             get1.clone()
         } else {
@@ -13,7 +13,7 @@ pub fn diff_associative_key(a: kalai::BValue, b: kalai::BValue, k: kalai::BValue
         }
     };
     let bb: kalai::BValue = {
-        let get2 = get(vec_18671.clone(), kalai::BValue::from(1i64));
+        let get2 = get(vec_18696.clone(), kalai::BValue::from(1i64));
         if get2.clone().is_some() {
             get2.clone()
         } else {
@@ -21,7 +21,7 @@ pub fn diff_associative_key(a: kalai::BValue, b: kalai::BValue, k: kalai::BValue
         }
     };
     let ab: kalai::BValue = {
-        let get3 = get(vec_18671.clone(), kalai::BValue::from(2i64));
+        let get3 = get(vec_18696.clone(), kalai::BValue::from(2i64));
         if get3.clone().is_some() {
             get3.clone()
         } else {
@@ -45,32 +45,32 @@ pub fn diff_associative_key(a: kalai::BValue, b: kalai::BValue, k: kalai::BValue
         }
     };
     let same: bool = {
-        let and_5579_auto: bool = in_a.clone();
-        if and_5579_auto.clone() {
-            let and_5579_auto: bool = in_b.clone();
-            if and_5579_auto.clone() {
+        let and_5579_auto_1: bool = in_a.clone();
+        if and_5579_auto_1.clone() {
+            let and_5579_auto_2: bool = in_b.clone();
+            if and_5579_auto_2.clone() {
                 c.clone()
             } else {
-                and_5579_auto.clone()
+                and_5579_auto_2.clone()
             }
         } else {
-            and_5579_auto.clone()
+            and_5579_auto_1.clone()
         }
     };
     let e: bool = !aa.clone().is_type("Nil");
     let f: bool = !bb.clone().is_type("Nil");
     let g: bool = {
-        let or_5581_auto: bool = e.clone();
-        if or_5581_auto.clone() {
-            or_5581_auto.clone()
+        let or_5581_auto_1: bool = e.clone();
+        if or_5581_auto_1.clone() {
+            or_5581_auto_1.clone()
         } else {
             !same.clone()
         }
     };
     let h: bool = {
-        let or_5581_auto: bool = f.clone();
-        if or_5581_auto.clone() {
-            or_5581_auto.clone()
+        let or_5581_auto_2: bool = f.clone();
+        if or_5581_auto_2.clone() {
+            or_5581_auto_2.clone()
         } else {
             !same.clone()
         }
@@ -79,11 +79,11 @@ pub fn diff_associative_key(a: kalai::BValue, b: kalai::BValue, k: kalai::BValue
         rpds::Vector::new()
             .push_back(
                 if {
-                    let and_5579_auto: bool = in_a.clone();
-                    if and_5579_auto.clone() {
+                    let and_5579_auto_3: bool = in_a.clone();
+                    if and_5579_auto_3.clone() {
                         g.clone()
                     } else {
-                        and_5579_auto.clone()
+                        and_5579_auto_3.clone()
                     }
                 } {
                     kalai::BValue::from(
@@ -96,11 +96,11 @@ pub fn diff_associative_key(a: kalai::BValue, b: kalai::BValue, k: kalai::BValue
             )
             .push_back(
                 if {
-                    let and_5579_auto: bool = in_b.clone();
-                    if and_5579_auto.clone() {
+                    let and_5579_auto_4: bool = in_b.clone();
+                    if and_5579_auto_4.clone() {
                         h.clone()
                     } else {
-                        and_5579_auto.clone()
+                        and_5579_auto_4.clone()
                     }
                 } {
                     kalai::BValue::from(
@@ -238,10 +238,10 @@ pub fn set_diff(a: kalai::BValue, b: kalai::BValue) -> kalai::BValue {
 pub fn vectorize(m: kalai::BValue) -> kalai::BValue {
     if kalai::not_empty(m.clone()) {
         return kalai::reduce(
-            |result, p_18713| {
-                let vec_18715 = p_18713.clone();
+            |result, p_18738| {
+                let vec_18740 = p_18738.clone();
                 let k: kalai::BValue = {
-                    let get4 = get(vec_18715.clone(), kalai::BValue::from(0i64));
+                    let get4 = get(vec_18740.clone(), kalai::BValue::from(0i64));
                     if get4.clone().is_some() {
                         get4.clone()
                     } else {
@@ -249,7 +249,7 @@ pub fn vectorize(m: kalai::BValue) -> kalai::BValue {
                     }
                 };
                 let v: kalai::BValue = {
-                    let get5 = get(vec_18715.clone(), kalai::BValue::from(1i64));
+                    let get5 = get(vec_18740.clone(), kalai::BValue::from(1i64));
                     if get5.clone().is_some() {
                         get5.clone()
                     } else {

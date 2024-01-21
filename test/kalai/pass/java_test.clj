@@ -1615,3 +1615,98 @@ else
 tmp1 = and__5579__auto__;
 }
 final boolean d = tmp1;"))
+
+
+(deftest macro-expand-gensym-test
+  (inner-form
+    '(let [^{:t :bool} a ^boolean (nil? false)
+           ^{:t :bool} b ^boolean (nil? true)
+           ^{:t :bool} c ^boolean (and a b)
+           ^{:t :bool} d ^boolean (and a
+                                       b
+                                       c)]
+       d)
+    '(do
+       (init
+         a
+         (invoke
+           clojure.lang.Util/identical
+           false
+           nil))
+       (init
+         b
+         (invoke
+           clojure.lang.Util/identical
+           true
+           nil))
+       (init
+         c
+         (do
+           (init
+             and__5579__auto__
+             a)
+           (if
+             and__5579__auto__
+             b
+             and__5579__auto__)))
+       (init
+         d
+         (do
+           (init
+             and__5579__auto___1
+             a)
+           (if
+             and__5579__auto___1
+             (do
+               (init
+                 and__5579__auto___2
+                 b)
+               (if
+                 and__5579__auto___2
+                 c
+                 and__5579__auto___2))
+             and__5579__auto___1)))
+       d)
+
+"public static final void testFunction() {
+final boolean a = (false == null);
+final boolean b = (true == null);
+final boolean and__5579__auto__ = a;
+boolean tmp1;
+boolean tmp2 = and__5579__auto__;
+if (tmp2)
+{
+tmp1 = b;
+}
+else
+{
+tmp1 = and__5579__auto__;
+}
+final boolean c = tmp1;
+final boolean and__5579__auto___1 = a;
+boolean tmp3;
+boolean tmp4 = and__5579__auto___1;
+if (tmp4)
+{
+final boolean and__5579__auto___2 = b;
+boolean tmp5;
+boolean tmp6 = and__5579__auto___2;
+if (tmp6)
+{
+tmp5 = c;
+}
+else
+{
+tmp5 = and__5579__auto___2;
+}
+{
+tmp3 = tmp5;
+}
+}
+else
+{
+tmp3 = and__5579__auto___1;
+}
+final boolean d = tmp3;"
+
+    ))

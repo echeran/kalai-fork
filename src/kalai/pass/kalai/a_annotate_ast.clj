@@ -1,5 +1,6 @@
 (ns kalai.pass.kalai.a-annotate-ast
-  (:require [meander.strategy.epsilon :as s]
+  (:require [clojure.string :as string]
+            [meander.strategy.epsilon :as s]
             [meander.epsilon :as m]
             [clojure.tools.analyzer.ast :as ast]
             [kalai.util :as u]
@@ -438,6 +439,31 @@
     ?else
     ?else))
 
+(defn rename-clj-gensym-shadow-name
+  [symbol-name]
+  (string/replace symbol-name "__#" "_"))
+
+(defn rename-clj-gensym-shadow-name?
+  [symbol-name]
+  (and (string/includes? symbol-name "__#")
+       (not (string/ends-with? symbol-name "__#0"))))
+
+(def annotate-ands
+  (s/rewrite
+    {:op   (m/pred #{:local :binding} ?op)
+     :name (m/pred rename-clj-gensym-shadow-name? ?name)
+     :form (m/app meta ?meta)
+     &     ?ast}
+    ;;->
+    {:op   ?op
+     :name ?name
+     :form ~(with-meta (symbol (rename-clj-gensym-shadow-name ?name)) ?meta)
+     &     ?ast}
+
+    ;; otherwise leave the ast as is
+    ?else
+    ?else))
+
 ;; TODO: split this mini-pipeline into 3 passes under the ast folder
 (defn rewrite
   "There is contextual information in the AST that is not available in s-expressions.
@@ -454,6 +480,7 @@
        (map #(ast/prewalk % annotate-vars))
        (map #(ast/prewalk % annotate-news))
 
+       (map #(ast/prewalk % annotate-ands))
        ;; TODO:
        ;; assert our invariant that everything has a type
        ;; separate pass on s-expressions
