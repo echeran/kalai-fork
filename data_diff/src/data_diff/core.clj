@@ -21,17 +21,16 @@
         ^boolean f (not (nil? bb))
         ^boolean g (or e ^boolean (not same))
         ^boolean h (or f ^boolean (not same))]
-    ;; TODO: this produces weird nonsense `if` when p and q are inline
-    ;; TODO: create a simpler test that recreates by having a boolean expression in an if or when block
-
     ^{:t {:vector [:any]} :cast :any}
-       [(when (and in-a g) ^{:t {:map [:any :any]} :cast :any} {k aa})
-        (when (and in-b h) ^{:t {:map [:any :any]} :cast :any} {k bb})
-        (when same ^{:t {:map [:any :any]} :cast :any} {k ab})]))
+       [(when (and in-a g) ^{:cast :any} {k aa})
+        (when (and in-b h) ^{:cast :any} {k bb})
+        (when same ^{:cast :any} {k ab})]))
 
 (defn merge2
   "A helper function to replace `merge` with `(reduce conj...)`"
   [m1 m2]
+  ;; TODO: observe change to our `(seq...)` matching rule from `(j/method 'stream ?coll)` to `(j/invoke seq ?coll)`
+  ;; TODO: update Java b_function rule for `reduce` to match Rust corresponding rule to create lambda around `conj` fn arg to HOF reduce
   (reduce conj m1 (seq m2)))
 
 (defn merge-diffs [^{:t :any} diff1 ^{:t :any} diff2]

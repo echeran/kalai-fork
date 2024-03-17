@@ -3,9 +3,9 @@ use crate::kalai::kalai::*;
 pub fn diff_associative_key(a: kalai::BValue, b: kalai::BValue, k: kalai::BValue) -> kalai::BValue {
     let va: kalai::BValue = kalai::get(a.clone(), k.clone());
     let vb: kalai::BValue = kalai::get(b.clone(), k.clone());
-    let vec_18696: kalai::BValue = diff(va.clone(), vb.clone());
+    let vec_18746: kalai::BValue = diff(va.clone(), vb.clone());
     let aa: kalai::BValue = {
-        let get1 = get(vec_18696.clone(), kalai::BValue::from(0i64));
+        let get1 = get(vec_18746.clone(), kalai::BValue::from(0i64));
         if get1.clone().is_some() {
             get1.clone()
         } else {
@@ -13,7 +13,7 @@ pub fn diff_associative_key(a: kalai::BValue, b: kalai::BValue, k: kalai::BValue
         }
     };
     let bb: kalai::BValue = {
-        let get2 = get(vec_18696.clone(), kalai::BValue::from(1i64));
+        let get2 = get(vec_18746.clone(), kalai::BValue::from(1i64));
         if get2.clone().is_some() {
             get2.clone()
         } else {
@@ -21,7 +21,7 @@ pub fn diff_associative_key(a: kalai::BValue, b: kalai::BValue, k: kalai::BValue
         }
     };
     let ab: kalai::BValue = {
-        let get3 = get(vec_18696.clone(), kalai::BValue::from(2i64));
+        let get3 = get(vec_18746.clone(), kalai::BValue::from(2i64));
         if get3.clone().is_some() {
             get3.clone()
         } else {
@@ -86,9 +86,9 @@ pub fn diff_associative_key(a: kalai::BValue, b: kalai::BValue, k: kalai::BValue
                         and_5579_auto_3.clone()
                     }
                 } {
-                    kalai::BValue::from(
+                    kalai::BValue::from(kalai::BValue::from(
                         rpds::HashTrieMap::new().insert(k.clone().clone(), aa.clone().clone()),
-                    )
+                    ))
                 } else {
                     kalai::BValue::from(kalai::NIL)
                 }
@@ -103,9 +103,9 @@ pub fn diff_associative_key(a: kalai::BValue, b: kalai::BValue, k: kalai::BValue
                         and_5579_auto_4.clone()
                     }
                 } {
-                    kalai::BValue::from(
+                    kalai::BValue::from(kalai::BValue::from(
                         rpds::HashTrieMap::new().insert(k.clone().clone(), bb.clone().clone()),
-                    )
+                    ))
                 } else {
                     kalai::BValue::from(kalai::NIL)
                 }
@@ -113,9 +113,9 @@ pub fn diff_associative_key(a: kalai::BValue, b: kalai::BValue, k: kalai::BValue
             )
             .push_back(
                 if same.clone() {
-                    kalai::BValue::from(
+                    kalai::BValue::from(kalai::BValue::from(
                         rpds::HashTrieMap::new().insert(k.clone().clone(), ab.clone().clone()),
-                    )
+                    ))
                 } else {
                     kalai::BValue::from(kalai::NIL)
                 }
@@ -124,7 +124,14 @@ pub fn diff_associative_key(a: kalai::BValue, b: kalai::BValue, k: kalai::BValue
     );
 }
 pub fn merge2(m1: kalai::BValue, m2: kalai::BValue) -> kalai::BValue {
-    return kalai::reduce(conj.clone(), m1.clone(), seq(m2.clone()));
+    let m2_seq: kalai::BValue = seq(m2.clone());
+    return kalai::reduce(
+        |o, o2| {
+            return kalai::conj(o.clone(), o2.clone());
+        },
+        m1.clone(),
+        m2_seq.clone(),
+    );
 }
 pub fn merge_diffs(diff1: kalai::BValue, diff2: kalai::BValue) -> kalai::BValue {
     return kalai::BValue::from(kalai::vec(kalai::map2(
@@ -238,10 +245,10 @@ pub fn set_diff(a: kalai::BValue, b: kalai::BValue) -> kalai::BValue {
 pub fn vectorize(m: kalai::BValue) -> kalai::BValue {
     if kalai::not_empty(m.clone()) {
         return kalai::reduce(
-            |result, p_18738| {
-                let vec_18740 = p_18738.clone();
+            |result, p_18791| {
+                let vec_18793 = p_18791.clone();
                 let k: kalai::BValue = {
-                    let get4 = get(vec_18740.clone(), kalai::BValue::from(0i64));
+                    let get4 = get(vec_18793.clone(), kalai::BValue::from(0i64));
                     if get4.clone().is_some() {
                         get4.clone()
                     } else {
@@ -249,7 +256,7 @@ pub fn vectorize(m: kalai::BValue) -> kalai::BValue {
                     }
                 };
                 let v: kalai::BValue = {
-                    let get5 = get(vec_18740.clone(), kalai::BValue::from(1i64));
+                    let get5 = get(vec_18793.clone(), kalai::BValue::from(1i64));
                     if get5.clone().is_some() {
                         get5.clone()
                     } else {

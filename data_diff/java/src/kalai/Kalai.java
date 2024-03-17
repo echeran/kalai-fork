@@ -194,4 +194,15 @@ public class Kalai {
             return false;
         }
     }
+
+    public static Stream<Object> seq(Object o) {
+       if (o instanceof Stream) {
+           return (Stream<Object>) o;
+       } else if (o instanceof Collection) {
+           return ((Collection<Object>) o).stream();
+       } else {
+           return null;
+//           throw new Exception("Could not seqify Object into a Java Stream!");
+       }
+    }
 }

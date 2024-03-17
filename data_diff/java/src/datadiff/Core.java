@@ -10,10 +10,10 @@ public class Core {
 public static final Object diffAssociativeKey(final Object a, final Object b, final Object k) {
 final Object va = kalai.Kalai.get(a, k);
 final Object vb = kalai.Kalai.get(b, k);
-final Object vec__18696 = diff(va, vb);
-final Object aa = kalai.Kalai.nth(vec__18696, 0L, null);
-final Object bb = kalai.Kalai.nth(vec__18696, 1L, null);
-final Object ab = kalai.Kalai.nth(vec__18696, 2L, null);
+final Object vec__18746 = diff(va, vb);
+final Object aa = kalai.Kalai.nth(vec__18746, 0L, null);
+final Object bb = kalai.Kalai.nth(vec__18746, 1L, null);
+final Object ab = kalai.Kalai.nth(vec__18746, 2L, null);
 final boolean inA = kalai.Kalai.contains(a, k);
 final boolean inB = kalai.Kalai.contains(b, k);
 final boolean d = !(ab == null);
@@ -93,7 +93,7 @@ else
 tmp11 = !same;
 }
 final boolean h = tmp11;
-io.lacuna.bifurcan.Map<Object,Object> tmp13;
+Object tmp13;
 final boolean and__5579__auto___3 = inA;
 boolean tmp15;
 boolean tmp16 = and__5579__auto___3;
@@ -110,7 +110,7 @@ if (tmp14)
 {
 tmp13 = (Object)new io.lacuna.bifurcan.Map<Object,Object>().put(k, aa, io.lacuna.bifurcan.Maps.MERGE_LAST_WRITE_WINS);
 }
-io.lacuna.bifurcan.Map<Object,Object> tmp17;
+Object tmp17;
 final boolean and__5579__auto___4 = inB;
 boolean tmp19;
 boolean tmp20 = and__5579__auto___4;
@@ -127,7 +127,7 @@ if (tmp18)
 {
 tmp17 = (Object)new io.lacuna.bifurcan.Map<Object,Object>().put(k, bb, io.lacuna.bifurcan.Maps.MERGE_LAST_WRITE_WINS);
 }
-io.lacuna.bifurcan.Map<Object,Object> tmp21;
+Object tmp21;
 boolean tmp22 = same;
 if (tmp22)
 {
@@ -136,7 +136,10 @@ tmp21 = (Object)new io.lacuna.bifurcan.Map<Object,Object>().put(k, ab, io.lacuna
 return (Object)new io.lacuna.bifurcan.List<Object>().addLast(tmp13).addLast(tmp17).addLast(tmp21);
 }
 public static final Object merge2(final Object m1, final Object m2) {
-return kalai.Kalai.foldLeft(m2.stream(), m1, conj);
+final Object m2Seq = m2.stream();
+return kalai.Kalai.foldLeft(m2Seq, m1, (o, o2) -> {
+return kalai.Kalai.conj(o, o2);
+});
 }
 public static final Object mergeDiffs(final Object diff1, final Object diff2) {
 return (Object)kalai.Kalai.vec(kalai.Kalai.map((a, b) -> {
@@ -254,10 +257,10 @@ return kalai.Kalai.foldLeft(m.stream(), (Object)kalai.Kalai.vec(kalai.Kalai.repe
 final long aInt = (long)a;
 final long bInt = (long)b;
 return (Object)clojure.lang.Numbers/max(aInt, bInt);
-}), null)), (result, p__18738) -> {
-final Object vec__18740 = p__18738;
-final Object k = kalai.Kalai.nth(vec__18740, 0L, null);
-final Object v = kalai.Kalai.nth(vec__18740, 1L, null);
+}), null)), (result, p__18791) -> {
+final Object vec__18793 = p__18791;
+final Object k = kalai.Kalai.nth(vec__18793, 0L, null);
+final Object v = kalai.Kalai.nth(vec__18793, 1L, null);
 return result.put(k, v);
 });
 }

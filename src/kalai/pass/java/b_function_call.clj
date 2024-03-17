@@ -74,7 +74,7 @@
       ;; we add `{:seq true}` to metadata to enable checking downstream whether ?coll is a seq because Java .stream()
       ;; is not allowed/available on a Java Stream
       (j/invoke (u/var ~#'seq) ?coll)
-      (m/app #(with-meta % {:seq true}) (j/method stream ?coll))
+      (m/app #(with-meta % {:seq true}) (j/invoke seq ?coll))
 
       (j/invoke (u/var ~#'first) ?seq)
       (j/method get (j/method findFirst ?seq))
@@ -200,6 +200,21 @@
                              ?xs
                              (list 'j/method 'stream ?xs))
                           ~(maybe-lambda ?fn 2)))
+
+      ;; reduce mutables
+      (r/invoke (u/var ~#'reduce) ?fn (m/and ?xs
+                                             (m/app meta {:t {(m/pred #{:mmap :mvector :mset}) [?value-t]}})))
+      (r/method unwrap
+                (r/method reduce
+                          (r/method into_iter (r/method clone ?xs))
+                          ~(maybe-lambda ?fn 2)))
+
+      (r/invoke (u/var ~#'reduce) ?fn ?initial (m/and ?xs
+                                                      (m/app meta {:t {(m/pred #{:mmap :mvector :mset}) [?value-t]}})))
+      (r/method fold
+                (r/method into_iter (r/method clone ?xs))
+                ?initial
+                ~(maybe-lambda ?fn 2))
 
       ;; Options:
       ;; 1. https://stackoverflow.com/a/67532404
